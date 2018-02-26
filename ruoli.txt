@@ -7,3 +7,4 @@
 | Andrea Segala    | Gestore del Progetto             |
 | Lorenzo Trovato  | Gestore del Progetto             |
 +------------------+----------------------------------+
+j
