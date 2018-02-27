@@ -1,0 +1,22 @@
++---------------------------+----------------------+
+|        DELIVERABLE        |      MILESTONE       |
++---------------------------+----------------------+
+|                           |                      |
+| Business Model Canvas     | Acquisto Biglietti   |
+|                           |                      |
+| Deliverable e Milestone   | Gestione Biglietti   |
+|                           |                      |
+| Precedenze                | Gestione Esposizioni |
+|                           |                      |
+| Work Breakdown Structure  |                      |
+|                           |                      |
+| Diagramma di Gantt        |                      |
+|                           |                      |
+| Schema E/R DataBase       |                      |
+|                           |                      |
+| Schema Logico Relazionale |                      |
+|                           |                      |
+| Query richieste           |                      |
+|                           |                      |
+| Applicazione Web          |                      |
++---------------------------+----------------------+
