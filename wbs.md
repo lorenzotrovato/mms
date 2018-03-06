@@ -11,20 +11,33 @@
   - [ ] Schema concettuale E/R
   - [ ] Schema logico relazionale
   - [ ] Implementazione della base di dati
-    * Creazione Tabelle
-    * Inserimento dati di prova
+    - Creazione Tabelle
+    - Inserimento dati di prova
   - [ ] Interrogazioni richieste
-    * Titoli e date di esposizioni tematiche di un determinato anno
-    * Numero biglietti emessi per una determinata esposizione
-    * Ricavato della vendita dei biglietti di una determinata esposizione
+    - Titoli e date di esposizioni tematiche di un determinato anno
+    - Numero biglietti emessi per una determinata esposizione
+    - Ricavato della vendita dei biglietti di una determinata esposizione
 - Web Application
   - Storyboard
   - Pagine
     - Amministrazione
-      - [ ] Ricavato vendite
+      - Gestione visite
+        - [ ] Aggiunta e Modifica prezzi
+        - [ ] Ricavato vendite
+      - Elenco esposizioni
+        - [ ] Aggiunta
+        - [ ] Modifica
+        - [ ] Eliminazione
+        - [ ] Ricavato vendite
+      - Sconti
+        - [ ] Aggiunta
+        - [ ] Modifica
+        - [ ] Rimozione
     - Pubblico
-      - [ ] Informazioni sulle esposizioni
-  - [ ] Autenticazione
-    * Registrazione
-    * Accesso
-  - [ ] CRUD per le tabelle
+      - [ ] Elenco esposizioni
+      - [ ] Acquisto biglietti
+      - [ ] Applicazione sconti
+      - [ ] Acquisto Servizi/Prodotti accessori
+    - Autenticazione
+      - [ ] Registrazione
+      - [ ] Accesso
