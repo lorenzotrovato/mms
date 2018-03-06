@@ -2,7 +2,7 @@
 
 - Progetto
   - [x] Deliverable e Milestone
-  - [ ] WBS
+  - [x] WBS
   - [ ] Diagramma di Gantt
   - [ ] Identificazione delle precedenze
   - [x] Business Model Canvas
