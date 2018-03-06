@@ -14,7 +14,7 @@
     * Creazione Tabelle
     * Inserimento dati di prova
   - [ ] Interrogazioni richieste
-    * Titoli e date di espozizioni tematiche di un determinato anno
+    * Titoli e date di esposizioni tematiche di un determinato anno
     * Numero biglietti emessi per una determinata esposizione
     * Ricavato della vendita dei biglietti di una determinata esposizione
 - Web Application
