@@ -12,9 +12,24 @@
   - Applicazione Web 
   
 ### Milestone
-- Biglietti
-  - Acquisto Biglietti
 - Amministrazione
-  - Aggiunta Eventi
-- Utilizzo
-  - Autenticazione Biglietti
+  * Gestione visite
+  * Aggiunta e Modifica prezzi
+  * Ricavato vendite
+  - Elenco esposizioni
+    * Aggiunta
+    * Modifica
+    * Eliminazione
+  - Ricavato vendite
+  - Sconti
+    * Aggiunta
+    * Modifica
+    * Rimozione
+- Pubblico
+  * Elenco esposizioni
+  * Acquisto biglietti
+  * Applicazione sconti
+  * Acquisto Servizi/Prodotti accessori
+- Autenticazione
+  * Registrazione
+  * Accesso
