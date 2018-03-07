@@ -1,23 +1,21 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="MMS - Museum Management System" company="EDOO" webLink="http://" view-date="2018-02-20" view-index="0" gantt-divider-location="280" resource-divider-location="338" version="2.0" locale="it_IT">
+<?xml version="1.0" encoding="UTF-8"?><project name="MMS - Museum Management System" company="EDOO" webLink="http://" view-date="2018-02-20" view-index="0" gantt-divider-location="280" resource-divider-location="338" version="2.8.5" locale="it_IT">
     <description/>
     <view zooming-state="default:3" id="gantt-chart">
-        <field id="tpd3" name="Nome" width="100" order="0"/>
+        <field id="tpd3" name="Nome" width="276" order="0"/>
     </view>
     <view id="resource-table">
-        <field id="0" name="Nome" width="50" order="0"/>
-        <field id="1" name="Ruolo predefinito" width="50" order="1"/>
+        <field id="0" name="Nome" width="167" order="0"/>
+        <field id="1" name="Ruolo predefinito" width="167" order="1"/>
     </view>
     <!-- -->
     <calendars>
         <day-types>
             <day-type id="0"/>
             <day-type id="1"/>
-            <calendar id="1" name="default">
-                <default-week sun="1" mon="0" tue="0" wed="1" thu="0" fri="1" sat="0"/>
-                <only-show-weekends value="false"/>
-                <overriden-day-types/>
-                <days/>
-            </calendar>
+            <default-week id="1" name="default" sun="1" mon="0" tue="0" wed="1" thu="0" fri="1" sat="0"/>
+            <only-show-weekends value="false"/>
+            <overriden-day-types/>
+            <days/>
         </day-types>
     </calendars>
     <tasks empty-milestones="true">
@@ -68,22 +66,18 @@
         <resource id="3" name="Mattia Maglie" function="2" contacts="" phone=""/>
         <resource id="4" name="Lorenzo Trovato" function="1" contacts="" phone=""/>
     </resources>
-    <allocations/>
+    <allocations>
+        <allocation task-id="4" resource-id="0" function="4" responsible="true" load="100.0"/>
+        <allocation task-id="0" resource-id="0" function="4" responsible="true" load="100.0"/>
+        <allocation task-id="1" resource-id="0" function="4" responsible="true" load="100.0"/>
+        <allocation task-id="2" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="0" resource-id="3" function="2" responsible="true" load="100.0"/>
+        <allocation task-id="1" resource-id="3" function="2" responsible="true" load="100.0"/>
+        <allocation task-id="3" resource-id="3" function="2" responsible="true" load="100.0"/>
+        <allocation task-id="0" resource-id="4" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="1" resource-id="4" function="1" responsible="true" load="100.0"/>
+    </allocations>
     <vacations/>
-    <taskdisplaycolumns>
-        <displaycolumn property-id="tpd2" order="-1" width="75" visible="false"/>
-        <displaycolumn property-id="tpd7" order="-1" width="75" visible="false"/>
-        <displaycolumn property-id="tpd8" order="-1" width="75" visible="false"/>
-        <displaycolumn property-id="tpd4" order="-1" width="75" visible="false"/>
-        <displaycolumn property-id="tpd5" order="-1" width="75" visible="false"/>
-        <displaycolumn property-id="tpd6" order="-1" width="75" visible="false"/>
-        <displaycolumn property-id="tpd10" order="-1" width="75" visible="false"/>
-        <displaycolumn property-id="tpd11" order="-1" width="75" visible="false"/>
-        <displaycolumn property-id="tpd9" order="-1" width="75" visible="false"/>
-        <displaycolumn property-id="tpd1" order="-1" width="75" visible="false"/>
-        <displaycolumn property-id="tpd0" order="-1" width="75" visible="false"/>
-        <displaycolumn property-id="tpd3" order="0" width="276" visible="true"/>
-    </taskdisplaycolumns>
     <previous/>
     <roles roleset-name="Default"/>
     <roles>
