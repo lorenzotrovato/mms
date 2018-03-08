@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><project name="MMS - Museum Management System" company="EDOO" webLink="http://" view-date="2018-02-20" view-index="0" gantt-divider-location="280" resource-divider-location="338" version="2.8.5" locale="it_IT">
+    <description/>
+    <view zooming-state="default:3" id="gantt-chart">
+        <field id="tpd3" name="Nome" width="276" order="0"/>
+    </view>
+    <view id="resource-table">
+        <field id="0" name="Nome" width="167" order="0"/>
+        <field id="1" name="Ruolo predefinito" width="167" order="1"/>
+    </view>
+    <!-- -->
+    <calendars>
+        <day-types>
+            <day-type id="0"/>
+            <day-type id="1"/>
+            <default-week id="1" name="default" sun="1" mon="0" tue="0" wed="1" thu="0" fri="1" sat="0"/>
+            <only-show-weekends value="false"/>
+            <overriden-day-types/>
+            <days/>
+        </day-types>
+    </calendars>
+    <tasks empty-milestones="true">
+        <taskproperties>
+            <taskproperty id="tpd0" name="type" type="default" valuetype="icon"/>
+            <taskproperty id="tpd1" name="priority" type="default" valuetype="icon"/>
+            <taskproperty id="tpd2" name="info" type="default" valuetype="icon"/>
+            <taskproperty id="tpd3" name="name" type="default" valuetype="text"/>
+            <taskproperty id="tpd4" name="begindate" type="default" valuetype="date"/>
+            <taskproperty id="tpd5" name="enddate" type="default" valuetype="date"/>
+            <taskproperty id="tpd6" name="duration" type="default" valuetype="int"/>
+            <taskproperty id="tpd7" name="completion" type="default" valuetype="int"/>
+            <taskproperty id="tpd8" name="coordinator" type="default" valuetype="text"/>
+            <taskproperty id="tpd9" name="predecessorsr" type="default" valuetype="text"/>
+        </taskproperties>
+        <task id="37" name="Progettazione" color="#6666ff" meeting="false" start="2018-02-26" duration="13" complete="54" expand="true">
+            <depend id="43" type="2" difference="0" hardness="Strong"/>
+            <task id="4" name="Business Model Canvas" color="#ccffff" meeting="false" start="2018-02-26" duration="2" complete="100" expand="true"/>
+            <task id="0" name="Deliverable e Milestone" color="#ccffff" meeting="false" start="2018-03-01" duration="1" complete="100" expand="true"/>
+            <task id="1" name="WBS" color="#ccffff" meeting="false" start="2018-03-05" duration="3" complete="70" priority="2" expand="true"/>
+            <task id="2" name="Diagramma di Gantt" color="#ccffff" meeting="false" start="2018-03-06" duration="4" complete="75" expand="true"/>
+            <task id="3" name="Identificazione delle precedenze" color="#ccffff" meeting="false" start="2018-03-08" duration="1" complete="0" expand="true"/>
+            <task id="5" name="Analisi dei rischi" color="#ccffff" meeting="false" start="2018-03-13" duration="4" complete="0" expand="true"/>
+        </task>
+        <task id="43" name="Base di Dati" color="#ff3333" meeting="false" start="2018-03-20" duration="5" complete="0" expand="true">
+            <depend id="44" type="2" difference="0" hardness="Strong"/>
+            <task id="6" name="Schema Concettuale E/R" color="#ffcccc" meeting="false" start="2018-03-20" duration="2" complete="0" expand="true"/>
+            <task id="7" name="Schema logico relazionale" color="#ffcccc" meeting="false" start="2018-03-24" duration="2" complete="0" expand="true">
+                <depend id="8" type="2" difference="0" hardness="Strong"/>
+            </task>
+            <task id="8" name="Implementazione base di dati" meeting="false" start="2018-03-27" duration="1" complete="0" expand="true">
+                <task id="9" name="Creazione tabelle" color="#ffcccc" meeting="false" start="2018-03-27" duration="1" complete="0" expand="true"/>
+                <task id="11" name="Inserimento dati di prova" color="#ffcccc" meeting="false" start="2018-03-27" duration="1" complete="0" expand="true"/>
+            </task>
+            <task id="12" name="Interrogazioni richieste" color="#ffcccc" meeting="false" start="2018-03-27" duration="1" complete="0" expand="true"/>
+        </task>
+        <task id="44" name="Sviluppo Web Application" color="#00cc00" meeting="false" start="2018-03-29" duration="19" complete="0" expand="true">
+            <task id="13" name="Storyboard MVC Web" color="#ccffcc" meeting="false" start="2018-03-29" duration="4" complete="0" expand="true">
+                <depend id="53" type="2" difference="0" hardness="Strong"/>
+            </task>
+            <task id="53" name="Sviluppo" color="#ccffcc" meeting="false" start="2018-04-05" duration="15" complete="0" expand="true"/>
+        </task>
+    </tasks>
+    <resources>
+        <resource id="0" name="Valerio Bucci" function="4" contacts="" phone=""/>
+        <resource id="1" name="Andrea Chierchia" function="3" contacts="" phone=""/>
+        <resource id="2" name="Andrea Segala" function="1" contacts="" phone=""/>
+        <resource id="3" name="Mattia Maglie" function="2" contacts="" phone=""/>
+        <resource id="4" name="Lorenzo Trovato" function="1" contacts="" phone=""/>
+    </resources>
+    <allocations>
+        <allocation task-id="4" resource-id="0" function="4" responsible="true" load="100.0"/>
+        <allocation task-id="0" resource-id="0" function="4" responsible="true" load="100.0"/>
+        <allocation task-id="1" resource-id="0" function="4" responsible="true" load="100.0"/>
+        <allocation task-id="2" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="0" resource-id="3" function="2" responsible="true" load="100.0"/>
+        <allocation task-id="1" resource-id="3" function="2" responsible="true" load="100.0"/>
+        <allocation task-id="3" resource-id="3" function="2" responsible="true" load="100.0"/>
+        <allocation task-id="0" resource-id="4" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="1" resource-id="4" function="1" responsible="true" load="100.0"/>
+    </allocations>
+    <vacations/>
+    <previous/>
+    <roles roleset-name="Default"/>
+    <roles>
+        <role id="1" name="Gestore Progetto"/>
+        <role id="2" name="Moderatore"/>
+        <role id="3" name="Osservatore"/>
+        <role id="4" name="Addetto alle pubbliche relazioni"/>
+    </roles>
+</project>

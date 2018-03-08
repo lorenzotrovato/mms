@@ -1,0 +1,43 @@
+# Work Breakdown Structure
+
+- Progetto
+  - [x] Deliverable e Milestone
+  - [x] WBS
+  - [ ] Diagramma di Gantt
+  - [ ] Identificazione delle precedenze
+  - [x] Business Model Canvas
+  - [ ] Analisi dei rischi
+- Base dei dati
+  - [ ] Schema concettuale E/R
+  - [ ] Schema logico relazionale
+  - [ ] Implementazione della base di dati
+    - Creazione Tabelle
+    - Inserimento dati di prova
+  - [ ] Interrogazioni richieste
+    - Titoli e date di esposizioni tematiche di un determinato anno
+    - Numero biglietti emessi per una determinata esposizione
+    - Ricavato della vendita dei biglietti di una determinata esposizione
+- Web Application
+  - Storyboard
+  - Pagine
+    - Amministrazione
+      - Gestione visite
+        - [ ] Aggiunta e Modifica prezzi
+        - [ ] Ricavato vendite
+      - Elenco esposizioni
+        - [ ] Aggiunta
+        - [ ] Modifica
+        - [ ] Eliminazione
+        - [ ] Ricavato vendite
+      - Sconti
+        - [ ] Aggiunta
+        - [ ] Modifica
+        - [ ] Rimozione
+    - Pubblico
+      - [ ] Elenco esposizioni
+      - [ ] Acquisto biglietti
+      - [ ] Applicazione sconti
+      - [ ] Acquisto Servizi/Prodotti accessori
+    - Autenticazione
+      - [ ] Registrazione
+      - [ ] Accesso
