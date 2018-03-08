@@ -102,8 +102,8 @@ https://drive.google.com/file/d/1zMDxxkBvm8cISVMXwFJA7TRQWP3KXHQa/view?usp=shari
 - Progetto
   - [x] Deliverable e Milestone
   - [x] WBS
-  - [ ] Diagramma di Gantt
-  - [ ] Identificazione delle precedenze
+  - [x] Diagramma di Gantt
+  - [x] Identificazione delle precedenze
   - [x] Business Model Canvas
   - [ ] Analisi dei rischi
 - Base dei dati
