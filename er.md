@@ -1,7 +1,7 @@
 # Sistema informatico per la gestione della biglietteria online
 ### Entità
 
-* acquistare biglietti (biglietto base & biglietto evento)
+* acquisto biglietti (biglietto base & biglietto evento)
   * eventi (esposizioni tematiche)
   * visite
 * identificazione delle esposizioni
