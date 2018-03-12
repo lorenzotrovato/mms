@@ -42,9 +42,9 @@
             <task id="5" name="Analisi dei rischi" color="#ccffff" meeting="false" start="2018-03-13" duration="4" complete="100" expand="true"/>
             <task id="56" name="Verifica" color="#66ffff" meeting="true" start="2018-03-20" duration="0" complete="100" expand="true"/>
         </task>
-        <task id="43" name="Base di Dati" color="#ff3333" meeting="false" start="2018-03-20" duration="5" complete="14" expand="true">
+        <task id="43" name="Base di Dati" color="#ff3333" meeting="false" start="2018-03-20" duration="5" complete="5" expand="true">
             <depend id="44" type="2" difference="0" hardness="Strong"/>
-            <task id="6" name="Schema Concettuale E/R" color="#ffcccc" meeting="false" start="2018-03-20" duration="2" complete="50" expand="true"/>
+            <task id="6" name="Schema Concettuale E/R" color="#ffcccc" meeting="false" start="2018-03-20" duration="2" complete="20" expand="true"/>
             <task id="7" name="Schema logico relazionale" color="#ffcccc" meeting="false" start="2018-03-24" duration="2" complete="0" expand="true">
                 <depend id="8" type="2" difference="0" hardness="Strong"/>
             </task>
@@ -95,19 +95,29 @@
         <allocation task-id="0" resource-id="0" function="4" responsible="false" load="100.0"/>
         <allocation task-id="1" resource-id="0" function="4" responsible="true" load="100.0"/>
         <allocation task-id="56" resource-id="0" function="4" responsible="true" load="100.0"/>
+        <allocation task-id="6" resource-id="0" function="4" responsible="true" load="100.0"/>
+        <allocation task-id="7" resource-id="0" function="4" responsible="true" load="100.0"/>
         <allocation task-id="4" resource-id="1" function="3" responsible="false" load="100.0"/>
         <allocation task-id="56" resource-id="1" function="3" responsible="true" load="100.0"/>
+        <allocation task-id="6" resource-id="1" function="3" responsible="true" load="100.0"/>
+        <allocation task-id="7" resource-id="1" function="3" responsible="true" load="100.0"/>
         <allocation task-id="2" resource-id="2" function="1" responsible="true" load="100.0"/>
         <allocation task-id="5" resource-id="2" function="1" responsible="false" load="100.0"/>
         <allocation task-id="56" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="6" resource-id="2" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="7" resource-id="2" function="1" responsible="true" load="100.0"/>
         <allocation task-id="0" resource-id="3" function="2" responsible="true" load="100.0"/>
         <allocation task-id="3" resource-id="3" function="2" responsible="true" load="100.0"/>
         <allocation task-id="5" resource-id="3" function="2" responsible="true" load="100.0"/>
         <allocation task-id="56" resource-id="3" function="2" responsible="true" load="100.0"/>
+        <allocation task-id="6" resource-id="3" function="2" responsible="true" load="100.0"/>
+        <allocation task-id="7" resource-id="3" function="2" responsible="true" load="100.0"/>
         <allocation task-id="0" resource-id="4" function="1" responsible="false" load="100.0"/>
         <allocation task-id="1" resource-id="4" function="1" responsible="false" load="25.0"/>
         <allocation task-id="2" resource-id="4" function="1" responsible="true" load="75.0"/>
         <allocation task-id="56" resource-id="4" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="6" resource-id="4" function="1" responsible="true" load="100.0"/>
+        <allocation task-id="7" resource-id="4" function="1" responsible="true" load="100.0"/>
     </allocations>
     <vacations/>
     <previous/>
