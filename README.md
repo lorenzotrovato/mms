@@ -105,7 +105,7 @@ https://drive.google.com/file/d/1zMDxxkBvm8cISVMXwFJA7TRQWP3KXHQa/view?usp=shari
   - [x] Diagramma di Gantt
   - [x] Identificazione delle precedenze
   - [x] Business Model Canvas
-  - [ ] Analisi dei rischi
+  - [x] Analisi dei rischi
 - Base dei dati
   - [ ] Schema concettuale E/R
   - [ ] Schema logico relazionale
