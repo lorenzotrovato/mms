@@ -14,7 +14,7 @@ Lorenzo Trovato    | Gestore del Progetto
 
 # Sistema informatico per la gestione della biglietteria online
 
-### Deliverable
+### Deliverables
 - Documentazione
   - Business Model Canvas
   - Deliverable e Milestone
@@ -26,29 +26,10 @@ Lorenzo Trovato    | Gestore del Progetto
 - Prodotto
   - Applicazione Web 
   
-### Milestone
-- Amministrazione
-  * Gestione visite
-  * Aggiunta e Modifica prezzi
-  * Ricavato vendite
-  - Elenco esposizioni
-    * Aggiunta
-    * Modifica
-    * Eliminazione
-  - Ricavato vendite
-  - Sconti
-    * Aggiunta
-    * Modifica
-    * Rimozione
-- Pubblico
-  * Elenco esposizioni
-  * Acquisto biglietti
-  * Applicazione sconti
-  * Acquisto Servizi/Prodotti accessori
-- Autenticazione
-  * Registrazione
-  * Accesso
-
+### Milestones
+- 20 marzo 2018: Documentazione
+- 27 marzo 2018: Base di dati
+- 30 aprile 2018: Applicazione web e termine progetto
 ### Precedenze
 
 1. Autenticazione
