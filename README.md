@@ -1,7 +1,7 @@
 # Sistema di Gestione del Museo
 Progetto UDA Secondo Quadrimestre 2018 5IA
 
-# Ruoli
+## Ruoli
 
 Nome               | Ruolo
 ------------------ | -------------
@@ -12,7 +12,7 @@ Andrea Segala      | Gestore del Progetto
 Lorenzo Trovato    | Gestore del Progetto
 
 
-# Sistema informatico per la gestione della biglietteria online
+## Sistema informatico per la gestione della biglietteria online
 
 ### Deliverables
 - Documentazione
