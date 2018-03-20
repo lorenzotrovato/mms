@@ -55,7 +55,7 @@ Lorenzo Trovato    | Gestore del Progetto
         * Modifica
         * Rimozione
   
-# Work Breakdown Structure
+## Work Breakdown Structure
 Versione Grafica: https://drive.google.com/file/d/1zMDxxkBvm8cISVMXwFJA7TRQWP3KXHQa/view?usp=sharing
 - Progetto
   - [x] Deliverable e Milestone
@@ -99,7 +99,7 @@ Versione Grafica: https://drive.google.com/file/d/1zMDxxkBvm8cISVMXwFJA7TRQWP3KX
       - [ ] Registrazione
       - [ ] Accesso
       
-# Valutazione dei rischi
+## Valutazione dei rischi
 
 Pericolo                        | Probabilità   | Cause                                                                                                                                                                                                              | Conseguenze                                                                                                                        | Precauzioni
 ------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- | ------------
