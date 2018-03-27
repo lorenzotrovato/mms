@@ -1,0 +1,7 @@
+UTENTI(id, name, mail, pass, role);
+BIGLIETTO(id, codUser, codCat, codTimeSlot, datePurchase, dateValidity, totalPrice);
+CATEGORIA(id, name, discount, docType);
+BI_ACC(codTicket, codAccessory);
+ACCESSORIO(id, name, price, type, nAvailable);
+FASCIAORARIA(id, codEvento, startHour, minutes, day);
+EVENTO(id, name, startDate, endDate, price, maxSeats);
