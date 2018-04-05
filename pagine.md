@@ -1,0 +1,14 @@
+## Pagine
+  - admin
+    - [ ] visits
+    - [ ] expos
+    - [ ] incomes
+    - [ ] discount
+    - [ ] users
+  - public
+    - [ ] landing
+    - [ ] showlist
+    - [ ] purchase
+  - auth
+    - [ ] signup
+    - [ ] signin
