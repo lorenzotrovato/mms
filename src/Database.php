@@ -1,10 +1,18 @@
 <?php
     class Database{
+        private static $instance;
         private $mysqli;
-        
+		
         public function __construct(){
-            $this->mysqli = new mysqli('localhost','5ia22','5ia22','5ia22');
-        }
+			$this->mysqli = new mysqli('localhost','5ia22','5ia22','5ia22');
+		}
+		
+		public static function init(){
+			if(is_null(self::$instance)){
+				self::$instance = new Database();
+			}
+			return self::$instance;
+		}
         
         public function querySelect($query){
             $ret = array();
