@@ -9,7 +9,7 @@
 
 		private $id;
 		private $name;
-		private $mail;
+		private $email;
 		private $role;
 
 		function __construct($userId){
@@ -26,7 +26,7 @@
 			}
 		}
 		
-		function merge($fields){
+		/*function merge($fields){
 			$userId = $this->id;
 			$stringUpdate='';
 			foreach($fields as $field => $value){
@@ -37,8 +37,7 @@
 			}
 			$stringUpdate = substr($stringUpdate, 0, -2);
 			$thid->mysqli->queryDML("UPDATE utenti SET $stringUpdate WHERE id = $userId");
-			
-		}
+		}*/
 
 		function getId(){
 			return $this->id;
@@ -49,11 +48,23 @@
 		}
 		
 		function getMail(){
-			return $this->mail;
+			return $this->email;
 		}
 		
 		function getRole(){
-			return 
+			return $this->role;
+		}
+
+		function setName($name){
+			$this->name=$name;
+		}
+
+		function setMail($email){
+			$this->email=$email;
+		}
+
+		function setRole($role){
+			$this->role=$role;
 		}
 	}
 ?>
