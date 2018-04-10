@@ -21,11 +21,39 @@
 				$this->name = $userData[0]['name'];
 				$this->mail = $userData[0]['mail'];
 				$this->role = $userData[0]['role'];
+			}else{
+				throw new Exception("ID utente non esistente");
 			}
+		}
+		
+		function merge($fields){
+			$userId = $this->id;
+			$stringUpdate='';
+			foreach($fields as $field => $value){
+				if($field != 'id'){
+					$this->$field = $value;
+					$stringUpdate .= "$field = $value, ";
+				}
+			}
+			$stringUpdate = substr($stringUpdate, 0, -2);
+			$thid->mysqli->queryDML("UPDATE utenti SET $stringUpdate WHERE id = $userId");
+			
 		}
 
 		function getId(){
-
+			return $this->id;
+		}
+		
+		function getName(){
+			return $this->name;
+		}
+		
+		function getMail(){
+			return $this->mail;
+		}
+		
+		function getRole(){
+			return 
 		}
 	}
 ?>
