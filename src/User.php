@@ -13,7 +13,7 @@
 		private $role;
 
 		function __construct($userId){
-			$this->mysqli = DB:init();
+			$this->mysqli = DB::init();
 			$sql = "SELECT * FROM utenti WHERE id = $userId";
 			$userData = $this->mysqli->querySelect($sql);
 			if(count($userData) == 1){
