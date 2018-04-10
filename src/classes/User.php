@@ -25,7 +25,7 @@
 				throw new Exception("ID utente non esistente");
 			}
 		}
-		
+
 		/*function merge($fields){
 			$userId = $this->id;
 			$stringUpdate='';
@@ -42,15 +42,15 @@
 		function getId(){
 			return $this->id;
 		}
-		
+
 		function getName(){
 			return $this->name;
 		}
-		
+
 		function getMail(){
 			return $this->email;
 		}
-		
+
 		function getRole(){
 			return $this->role;
 		}
