@@ -18,7 +18,7 @@
             	$this->id = $cat['id'];
             	$this->name = $cat['name'];
             	$this->discount = $cat['discount'];
-            	$this->docType = $cat['docType'];
+            	$this->docType = $cat['docType']; 
 			}
         }
         
