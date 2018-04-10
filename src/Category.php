@@ -14,10 +14,12 @@
         public function __construct($id){
             $this->mysqli = DB::init();
             $cat = $this->mysqli->querySelect('select * from categoria where id='.$id);
-            $this->id = $cat['id'];
-            $this->name = $cat['name'];
-            $this->discount = $cat['discount'];
-            $this->docType = $cat['docType'];
+			if (count($cat) == 1){
+            	$this->id = $cat['id'];
+            	$this->name = $cat['name'];
+            	$this->discount = $cat['discount'];
+            	$this->docType = $cat['docType'];
+			}
         }
         
         public function getId(){
