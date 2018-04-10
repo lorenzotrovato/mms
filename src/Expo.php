@@ -1,6 +1,7 @@
 <?php
 	namespace MMS;
 	require 'Database.php';
+	require 'TimeSlot.php';
 	use MMS\Database as DB;
 
 	class Expo{
