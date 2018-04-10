@@ -15,10 +15,10 @@
             $this->mysqli = DB::init();
             $cat = $this->mysqli->querySelect('select * from categoria where id='.$id);
 			if (count($cat) == 1){
-            	$this->id = $cat['id'];
-            	$this->name = $cat['name'];
-            	$this->discount = $cat['discount'];
-            	$this->docType = $cat['docType']; 
+            	$this->id = $cat[0]['id'];
+            	$this->name = $cat[0]['name'];
+            	$this->discount = $cat[0]['discount'];
+            	$this->docType = $cat[0]['docType']; 
 			}
         }
         
