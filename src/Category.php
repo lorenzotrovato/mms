@@ -36,4 +36,4 @@
             return $this->docType;
         }
     }//class
-?>
+?> 
