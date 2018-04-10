@@ -18,7 +18,7 @@
 			$ret = array();
 			try{
 				$ris = $this->mysqli->query($query);
-				return $ris->fecth_all(MYSQLI_ASSOC);
+				return $ris->fetch_all(MYSQLI_ASSOC);
 			}catch(Exception $e){
 				return $this->mysqli->error;
 			}
