@@ -5,7 +5,7 @@
 	use MMS\Database as DB;
 	use MMS\Category; 
 	
-	class Biglietto{
+	class Ticket{
 		private $mysqli;
 
 		private $id;
