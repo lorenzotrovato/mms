@@ -1,10 +1,12 @@
 <?php
     namespace MMS;
 	require 'Database.php';
+	require 'Category.php';
 	use MMS\Database as DB;
+	use MMS\Category; 
 	
 	class Biglietto{
-		private $db;
+		private $mysqli;
 
 		private $id;
 		private $codUser;
@@ -14,43 +16,43 @@
 		private $dateValidity;
 		private $totalPrice;
 
-		public __construct($id){
-			$this->db = DB::init();
-			$biglietto = $this->db->querySelect("select * from biglietto where id=".$id);
+		public function __construct($id){
+			$this->mysqli = DB::init();
+			$biglietto = $this->mysqli->querySelect('select * from biglietto where id='.$id);
 			$this->id = $biglietto['id'];
 			$this->codUser = $biglietto['codUser'];
-			$this->codCat = $biglietto['codCat'];
+			$this->codCat = new Category($biglietto['codCat']);
 			$this->codTimeSlot = $biglietto['codTimeSlot'];
 			$this->datePurchase = $biglietto['datePurchase'];
 			$this->dateValidity = $biglietto['dateValidity'];
 			$this->totalPrice = $biglietto['totalPrice'];
 		}
 
-		public getId(){
+		public function getId(){
 		    return $this->id;
 		}
 
-		public getCodUser(){
+		public function getCodUser(){
 		    return $this->codUser;
 		}
 
-		public getCodCat(){
+		public function getCodCat(){
 		    return $this->codCat;
 		}
 
-		public getCodTimeSlot(){
+		public function getCodTimeSlot(){
 		    return $this->codTimeSlot;
 		}
 
-		public getDatePurchase(){
+		public function getDatePurchase(){
 		    return $this->datePurchase;
 		}
 
-		public getDateValidity(){
+		public function getDateValidity(){
 		    return $this->dateValidity;
 		}
 		
-		public getTotalPrice(){
+		public function getTotalPrice(){
 		    return $this->totalPrice;
 		}
 	}//class
