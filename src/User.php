@@ -66,5 +66,11 @@
 		function setRole($role){
 			$this->role=$role;
 		}
+
+		function setPassword($password){
+			$userId = $this->id;
+			$hash = password_hash($password, PASSWORD_DEFAULT);
+			$this->mysqli->queryDML("UPDATE utenti SET pass = '$hash' WHERE id = $userId");
+		}
 	}
 ?>
