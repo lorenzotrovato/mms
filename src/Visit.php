@@ -12,6 +12,8 @@
 		private $endDate;
 		private $price;
 		private $maxSeats;
+		
+		private $fascia;
 
 		public function __construct(){
 			$this->mysqli = DB::init();
@@ -24,6 +26,8 @@
 			$this->endDate = $row['endDate'];
 			$this->price = $row['price'];
 			$this->maxSeats = $row['maxSeats'];
+			
+			$this->fascia = new TimeSlot($this->id);
 		}
 	}
 ?>
