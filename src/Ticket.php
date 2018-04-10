@@ -19,13 +19,15 @@
 		public function __construct($id){
 			$this->mysqli = DB::init();
 			$biglietto = $this->mysqli->querySelect('select * from biglietto where id='.$id);
-			$this->id = $biglietto['id'];
-			$this->codUser = $biglietto['codUser'];
-			$this->codCat = new Category($biglietto['codCat']);
-			$this->codTimeSlot = $biglietto['codTimeSlot'];
-			$this->datePurchase = $biglietto['datePurchase'];
-			$this->dateValidity = $biglietto['dateValidity'];
-			$this->totalPrice = $biglietto['totalPrice'];
+			if (count($biglietto)){
+				$this->id = $biglietto[0]['id'];
+				$this->codUser = $biglietto[0]['codUser'];
+				$this->codCat = new Category($biglietto[0]['codCat']);
+				$this->codTimeSlot = $biglietto[0]['codTimeSlot'];
+				$this->datePurchase = $biglietto[0]['datePurchase'];
+				$this->dateValidity = $biglietto[0]['dateValidity'];
+				$this->totalPrice = $biglietto[0]['totalPrice'];
+			}
 		}
 
 		public function getId(){
