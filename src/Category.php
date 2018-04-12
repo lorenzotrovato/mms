@@ -19,6 +19,8 @@
             	$this->name = $cat[0]['name'];
             	$this->discount = $cat[0]['discount'];
             	$this->docType = $cat[0]['docType']; 
+			}else{
+				throw new Exception('Id non valido');
 			}
         }
         
