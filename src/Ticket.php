@@ -27,6 +27,8 @@
 				$this->datePurchase = $biglietto[0]['datePurchase'];
 				$this->dateValidity = $biglietto[0]['dateValidity'];
 				$this->totalPrice = $biglietto[0]['totalPrice'];
+			}else{
+				throw new Exception('Id non valido');
 			}
 		}
 
