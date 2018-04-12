@@ -51,5 +51,35 @@
 		public function getReturnable(){
 			return $this->returnable;
 		}
+		
+		public function setName($newName){
+			$this->name = $newName;
+		}
+		
+		public function setPrice($newPrice){
+			$this->price = $newPrice;
+		}
+		
+		public function setType($newType){
+			$this->type = $newType;
+		}
+		
+		public function setNAvailable($newNAvailable){
+			$this->nAvailable = $newNAvailable;
+		}
+		
+		public function setReturnable($newReturnable){
+			$this->returnable = $newReturnable;
+		}
+		
+		public function merge(){
+			$id = $this->id;
+			$name = $this->name;
+			$price = $this->price;
+			$type = $this->type;
+			$nAvailable = $this->nAvailable;
+			$returnable = $this->returnable;
+			return $this->mysqli->queryDML("update accessorio set name='$name', price='$price', type='$type', nAvailable='$nAvailable', returnable='$returnable' where id='$id'") > 0;
+		}
 	}//class
 ?>
