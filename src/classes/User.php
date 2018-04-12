@@ -19,25 +19,12 @@
 			if(count($userData) == 1){
 				$this->id = $userId;
 				$this->name = $userData[0]['name'];
-				$this->mail = $userData[0]['mail'];
+				$this->email = $userData[0]['mail'];
 				$this->role = $userData[0]['role'];
 			}else{
 				throw new Exception("ID utente non esistente");
 			}
 		}
-
-		/*function merge($fields){
-			$userId = $this->id;
-			$stringUpdate='';
-			foreach($fields as $field => $value){
-				if($field != 'id'){
-					$this->$field = $value;
-					$stringUpdate .= "$field = $value, ";
-				}
-			}
-			$stringUpdate = substr($stringUpdate, 0, -2);
-			$thid->mysqli->queryDML("UPDATE utenti SET $stringUpdate WHERE id = $userId");
-		}*/
 
 		function getId(){
 			return $this->id;
@@ -71,6 +58,13 @@
 			$userId = $this->id;
 			$hash = password_hash($password, PASSWORD_DEFAULT);
 			$this->mysqli->queryDML("UPDATE utenti SET pass = '$hash' WHERE id = $userId");
+		}
+		
+		function merge(){
+			$name=$this->name;
+			$email=$this->email;
+			$role=$this->role;
+			return ($thid->mysqli->queryDML("UPDATE utente SET name = '$name', mail = '$email', role = '$role' WHERE id = $userId") > 0);
 		}
 	}
 ?>
