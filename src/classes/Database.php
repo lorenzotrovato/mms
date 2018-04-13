@@ -1,5 +1,4 @@
 <?php
-	// namespace MMS; //?
 
 	class Database{
 		private static $instance;
