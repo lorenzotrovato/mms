@@ -12,6 +12,10 @@
 		private $email;
 		private $role;
 
+		/**
+		 * Costruttore. Le variabili vengono scaricate dal database
+		 * @param integer $userId l'identificativo numerico dell'utente a cui fare riferimento sulla relazione utente
+		 */
 		function __construct($userId){
 			$this->mysqli = DB::init();
 			$sql = "SELECT * FROM utenti WHERE id = $userId";

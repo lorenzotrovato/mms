@@ -66,13 +66,5 @@
 		public function error(){
 			return $this->mysqli->error_list;
 		}
-
-		/**
-		 * @param  string $raw la stringa da processare
-		 * @return string la stringa originale processata con la funzione real_escape_string della classe mysqli
-		 */
-		public function escape($raw){
-			return $this->mysqli->real_escape_string($raw);
-		}
 	}
 ?>
