@@ -30,45 +30,75 @@
 			}
 		}
 
+		/**
+		 * @return integer l'identificativo numerico
+		 */
 		function getId(){
 			return $this->id;
 		}
 
+		/**
+		 * @return string il nome
+		 */
 		function getName(){
 			return $this->name;
 		}
 
+		/**
+		 * @return string l'email
+		 */
 		function getMail(){
 			return $this->email;
 		}
 
+		/**
+		 * @return integer il ruolo
+		 */
 		function getRole(){
 			return $this->role;
 		}
 
+		/**
+		 * Modifica la variabile privata $name
+		 * @param string $name il nome
+		 */
 		function setName($name){
 			$this->name=$name;
 		}
 
+		/**
+		 * Modifica la variabile privata $email
+		 * @param string $email l'email
+		 */
 		function setMail($email){
 			$this->email=$email;
 		}
 
+		/**
+		 * Modifica la variabile privata $role
+		 * @param integer $role il ruolo
+		 */
 		function setRole($role){
 			$this->role=$role;
 		}
 
+		/**
+		 * Modifica la password presente sul database
+		 * @param string $password la password
+		 */
 		function setPassword($password){
 			$userId = $this->id;
 			$hash = password_hash($password, PASSWORD_DEFAULT);
 			$this->mysqli->queryDML("UPDATE utenti SET pass = '$hash' WHERE id = $userId");
 		}
 		
+		/**
+		 * Sovrascrive i dati presenti sul Database con quelli presenti nell'oggetto
+		 * @return mixed se l'operazione è andata a buon fine ritorna il numero di righe affette (integer) altrimenti ritorna l'errore (string)
+		 */
 		function merge(){
-			$name=$this->name;
-			$email=$this->email;
-			$role=$this->role;
-			return ($thid->mysqli->queryDML("UPDATE utente SET name = '$name', mail = '$email', role = '$role' WHERE id = $userId") > 0);
+			$sql = "UPDATE utente SET name = '$this->name', mail = '$this->email', role = '$this->role' WHERE id = $this->id";
+			return $this->mysqli->queryDML();
 		}
 	}
 ?>
