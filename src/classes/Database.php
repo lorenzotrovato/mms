@@ -26,7 +26,6 @@
 		 * @return mixed se l'operazione è andata a buon fine ritorna un array bidimensionale (array) altrimenti ritorna l'errore (string)
 		 */
 		public function querySelect($query){
-			$ret = array();
 			try{
 				$ris = $this->mysqli->query($query);
 				return $ris->fetch_all(MYSQLI_ASSOC);
@@ -66,6 +65,14 @@
 		 */
 		public function error(){
 			return $this->mysqli->error_list;
+		}
+
+		/**
+		 * @param  string $raw la stringa da processare
+		 * @return string la stringa originale processata con la funzione real_escape_string della classe mysqli
+		 */
+		public function escape($raw){
+			return $this->mysqli->real_escape_string($raw);
 		}
 	}
 ?>
