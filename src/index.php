@@ -12,7 +12,7 @@
 		<link href="./css/bootstrap.min.css" rel="stylesheet">
 
 		<!-- Custom styles for this template -->
-		<link href="cover.css" rel="stylesheet">
+		<link href="./cover.css" rel="stylesheet">
 	</head>
 
 	<body class="text-center">
