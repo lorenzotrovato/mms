@@ -10,11 +10,7 @@ namespace MMS;
 		
 		private static $mysqli = DB::init();
 		
-		/**
-		 * @param string $string la stringa da processare
-		 * @param integer $length (optional) eventuale lunghezza massima alla quale va troncata la stringa
-		 * @return string la stringa originale processata con la funzione real_escape_string della classe mysqli
-		 */
+		
 		public static function escape($string,$length=0){
 			if($length>0){
 				$str=substr($string,0,$length);
@@ -24,25 +20,50 @@ namespace MMS;
 			}	
 		}
 		
-		/**
-		 * Verifica se un utente esiste all'interno del database
-		 * @param  string  $username l'utente da verificare
-		 * @return boolean se l'utente esiste true, altrimenti false
-		 */
 		public static function userExists($username){
-			$query_exs= 'SELECT * FROM utenti WHERE name="'. self::escape($username) .'"';
+			$query_exs= 'SELECT * FROM utente WHERE name="'. self::escape($username) .'"';
 			return self::$mysqli->numRows($query_exs)>0;
 		}
 		
-		/**
-		 * verifica se è stato effettuato il login
-		 * @return boolean se le variabili di sessione necessarie sono state impostate true, altrimenti false
-		 */
-		public static function verLogin(){
+		public static function verSession(){
 			if (session_status() == PHP_SESSION_NONE) {
 				session_start();
 			}
-			return isset($_SESSION['logged_user']) && $_SESSION['logged_user']!="";
+			return isset($_SESSION['logged_id']) && $_SESSION['logged_id']!="";
 		}
+		
+		public function getUserFromSession(){
+			return new User($_SESSION['logged_id']);
+		}
+		
+		public static function login($us,$psw){
+			$us = self::escape($us);
+			$users = self::$mysqli->querySelect("SELECT id, name, mail, pass FROM utente WHERE name = $us OR mail = $us");
+			if(count($users) == 1){
+				if(password_verify($psw, $users[0]['pass'])){
+					if (session_status() == PHP_SESSION_NONE) {
+						session_start();
+					}
+					$_SESSION['logged_id'] = $users[0]['id'];
+					$_SESSION['logged_user'] = $us;
+					return new User($users[0]['id']);
+				}else{
+					return null;
+				}
+			}else {
+				return null;
+			}
+		}
+		
+		public static function register($us,$mail,$psw,$role){
+			$us = self::escape($us,65);
+			$mail = self::escape($mail,255);
+			$hashed = password_hash($psw, PASSWORD_DEFAULT);
+			$newuser = User::addUser($us,$mail,$hashed,$role);
+			if(!is_null($newuser)){
+				return $newuser;
+			}
+		}
+		
 	}
 ?>
