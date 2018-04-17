@@ -21,7 +21,7 @@
 				$this->name = $acc[0]['name'];
 				$this->price = $acc[0]['price'];
 				$this->type = $acc[0]['type'];
-				$this->nAvailable = 0; // messo 0 solo per evitare errori di sintassi con l'IDE che uso. Che famo se è NULL ?
+				$this->nAvailable = $acc[0]['nAvailable'];
 				$this->returnable = $acc[0]['returnable'];
 			}else{
 				throw new Exception('Id non valido');
