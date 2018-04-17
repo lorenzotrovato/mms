@@ -27,6 +27,14 @@ a:hover {
 html,
 body {
   height: 100%;
+  background-image: url('https://assets.londonist.com/uploads/2017/01/i875/concourse.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  -webkit-filter: blur(5px);
+  -moz-filter: blur(5px);
+  -o-filter: blur(5px);
+  -ms-filter: blur(5px);
+  filter: blur(5px);
   background-color: #333;
 }
 
