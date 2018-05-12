@@ -6,9 +6,11 @@
     - [ ] discount
     - [ ] users
   - public
-    - [ ] landing
-    - [ ] showlist
-    - [ ] purchase
+    - [ ] landing  //Home
+    - [ ] showlist //Eventi
+    - [ ] contacts //Contatti
+  - private
+	- [ ] purchases //Acquisti
   - auth
-    - [ ] signup
+    - [ ] signup  
     - [ ] signin

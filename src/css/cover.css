@@ -2,21 +2,26 @@
  * Globals
  */
 
+
 /* Links */
+
 a,
 a:focus,
 a:hover {
-  color: #fff;
+	color: #fff;
 }
 
+
 /* Custom default button */
+
 .btn-secondary,
 .btn-secondary:hover,
 .btn-secondary:focus {
-  color: #333;
-  text-shadow: none; /* Prevent inheritance from `body` */
-  background-color: #fff;
-  border: .05rem solid #fff;
+	color: #333;
+	text-shadow: none;
+	/* Prevent inheritance from `body` */
+	background-color: #fff;
+	border: .05rem solid #fff;
 }
 
 
@@ -26,89 +31,245 @@ a:hover {
 
 html,
 body {
-  height: 100%;
-  background-image: url('https://assets.londonist.com/uploads/2017/01/i875/concourse.jpg');
-  background-repeat: no-repeat;
-  background-size: cover;
-  -webkit-filter: blur(5px);
-  -moz-filter: blur(5px);
-  -o-filter: blur(5px);
-  -ms-filter: blur(5px);
-  filter: blur(5px);
-  background-color: #333;
+	height: 100%;
 }
 
 body {
-  display: -ms-flexbox;
-  display: flex;
-  color: #fff;
-  text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
-  box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
+	display: -ms-flexbox;
+	display: flex;
+	color: black;
 }
 
-.cover-container {
-  max-width: 42em;
+.cover-heading {
+	color: white;
+}
+
+main {
+	color: white;
+	padding-top: 4.3rem;
 }
 
 
 /*
  * Header
  */
+
 .masthead {
-  margin-bottom: 2rem;
+	margin-bottom: 2rem;
+	z-index: 999; 
+	background-color: rgba(0,0,0,0.8); 
+	padding-top: 1rem; 
+	padding-bottom: 1rem; 
+	left: 0
 }
 
 .masthead-brand {
-  margin-bottom: 0;
+	margin-bottom: 0;
+	color: white;
+}
+
+.nav{
+	margin-right: 20px;
 }
 
 .nav-masthead .nav-link {
-  padding: .25rem 0;
-  font-weight: 700;
-  color: rgba(255, 255, 255, .5);
-  background-color: transparent;
-  border-bottom: .25rem solid transparent;
+	padding: .25rem 0;
+	font-weight: 700;
+	color: rgba(255, 255, 255, .5);
+	background-color: transparent;
+	border-bottom: .25rem solid transparent;
 }
 
-.nav-masthead .nav-link:hover,
+.nav-masthead .nav-link:not(.active):hover,
 .nav-masthead .nav-link:focus {
-  border-bottom-color: rgba(255, 255, 255, .25);
+	border-bottom-color: rgba(255, 255, 255, .25);
 }
 
 .nav-masthead .nav-link + .nav-link {
-  margin-left: 1rem;
+	margin-left: 1rem;
 }
 
 .nav-masthead .active {
-  color: #fff;
-  border-bottom-color: #fff;
+	color: #fff;
+	border-bottom-color: #fff;
 }
 
 @media (min-width: 48em) {
-  .masthead-brand {
-    float: left;
-  }
-  .nav-masthead {
-    float: right;
-  }
+	.masthead-brand {
+		float: left;
+	}
+	.nav-masthead {
+		float: right;
+	}
 }
-
 
 /*
  * Cover
  */
+
 .cover {
-  padding: 0 1.5rem;
+	margin: auto;
+	padding: 0 1.5rem;
 }
+
 .cover .btn-lg {
-  padding: .75rem 1.25rem;
-  font-weight: 700;
+	padding: .75rem 1.25rem;
+	font-weight: 700;
 }
 
 
 /*
  * Footer
  */
+
 .mastfoot {
-  color: rgba(255, 255, 255, .5);
+	color: rgba(255, 255, 255, .5);
+}
+
+
+/**
+  DA QUI IN POI E GHEMO ZONTA' NOIALTRI
+*/
+
+body {
+	background-color: black;
+}
+
+body:before {
+	background-image: url('../images/background.jpg');
+	background-size: cover;
+	content: "";
+	filter: brightness(0.7) blur(5px);
+	position: fixed;
+	height: calc(100% + 100px);
+	width: calc(100% + 100px);
+	top: -25px;
+	left: -25px;
+	z-index: -1;
+}
+
+.card-event {
+	overflow: hidden;
+	color: black;
+	background-color: rgba(255, 255, 255, 0.8);
+	max-width: 1000px;
+	height: 210px;
+	padding-bottom: 10px;
+	transition: background-color 0.2s linear;
+}
+
+.card-event .card-body {
+	position: relative;
+}
+
+.card-event .btn-container {
+	position: absolute;
+	bottom: 20px;
+	width: 100%;
+	left: 0;
+}
+
+.card-event .card-img-left {
+	min-height: 200px;
+}
+
+.card-img-left {
+	position: absolute;
+	height: 100%;
+	max-height: 100%;
+	width: auto;
+	max-width: 200px;
+	object-fit: cover;
+}
+
+.card-img-bottom{
+	object-fit: cover;
+}
+
+.card-img-left ~ .card-body {
+	margin-left: 200px;
+}
+
+.block-with-text {
+	height: 68px;
+	overflow: hidden;
+}
+
+.card-content{
+	opacity: 0;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	max-width: 1000px;
+	left: 0;
+	overflow: hidden;
+}
+
+.event-info{
+	height: 100%;
+	width: 100%;
+	overflow-y: auto;
+	padding: 20px 20px 88px 20px;
+	position: relative;
+	z-index: 0;
+}
+
+.btn-container-info{
+	position: fixed;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.88);
+    height: 78px;
+    left: 0;
+    bottom: 0;
+    padding: 20px 20px;
+    box-shadow: 0 -4px 5px 0 rgba(0,0,0,0.14), 0 -1px 10px 0 rgba(0,0,0,0.12), 0 -2px 4px -1px rgba(0,0,0,0.2);
+}
+
+.card-header{
+	cursor: pointer;
+}
+
+table.table-timeslot tr:nth-child(1) td, table.table-timeslot tr:nth-child(1) th{
+	border-top: 0;
+}
+
+#suggestions{
+	color: black;
+}
+
+td a{
+	color: black;
+}
+
+@media screen and (max-width: 768px) {
+	.card-event {
+		height: auto;
+	}
+	.card-img-left {
+		position: absolute;
+		height: 100%;
+		max-height: 200px;
+		width: 100%;
+		max-width: 100%;
+		object-fit: cover;
+	}
+	.card-img-left ~ .card-body {
+		margin-left: 0;
+		margin-top: 200px;
+	}
+	.card-event .btn.event-btn {
+		width: 100%;
+	}
+	.card-event .btn-container {
+		position: static;
+		bottom: auto;
+		width: auto;
+		left: auto;
+	}
+	.card-event .btn-container {
+		position: static;
+		bottom: auto;
+		width: auto;
+		left: auto;
+	}
 }

@@ -1,9 +1,10 @@
 <?php
 	namespace MMS;
-	require 'Database.php';
+	require_once $_SERVER["DOCUMENT_ROOT"].'/src/includes/autoload.php';
 	use MMS\Database as DB;
+	use MMS\Security as Security;
 	class TimeSlot{
-		private $mysqli;
+		private static $mysqli=null;
 
 		private $id;
 		private $codEvent;
@@ -19,22 +20,30 @@
 		 * @param integer $minutes   (optional) durata della fascia oraria in minuti
 		 * @param integer $day       (optional) giorno della settimana (0 < $day < 7) a cui la fascia oraria fa riferimento
 		 */
-		public function __construct($id, $codEvent, $startHour, $minutes, $day){
-			$this->mysqli = DB::init();
-			if(!empty($codEvent) && !empty($startHour) && !empty($minutes) && !empty($day)){
+		public function __construct($id, $codEvent=null, $startHour=null, $minutes=null, $day=null){
+			if(is_null(self::$mysqli)){
+				self::$mysqli = DB::init();
+			}
+			if(!empty($codEvent) && !is_null($startHour) && !is_null($minutes) && !is_null($day)){
 				$this->id = $id;
 				$this->startHour = $startHour;
 				$this->minutes = $minutes;
 				$this->day = $day;
 			}else{
 				$sql = "SELECT * FROM fasciaoraria WHERE id=$id";
-				$row = $this->mysqli->querySelect($sql)[0];
-
+				$row = self::$mysqli->querySelect($sql)[0];
+				
+				$this->id = $row['id'];
 				$this->codEvent = $row['codEvent'];
 				$this->startHour = $row['startHour'];
 				$this->minutes = $row['minutes'];
 				$this->day = $row['day'];
 			}
+		}
+		
+		public static function init(){
+			self::$mysqli = DB::init();
+			Security::init();
 		}
 
 		/**
@@ -42,16 +51,36 @@
 		 * @return array un array di fascieorarie che fanno riferimento all'evento inserito
 		 */
 		public static function getSlots($codEvent){
-			$slots = array();
-
-			$sql = "SELECT * FROM fasciaoraria WHERE codEvent=$codEvent";
-			$rows = $this->mysqli->querySelect($sql);
-
+			$slots = array(1 => array(), 2 => array(), 3 => array(), 4 => array(), 5 => array(), 6 => array(), 7 => array());
+			$sql = "SELECT id, codEvent, startHour, minutes, day FROM fasciaoraria WHERE codEvent = $codEvent ORDER BY day, startHour, minutes";
+			$rows = self::$mysqli->querySelect($sql);
+			/*var_dump($sql);
+			var_dump($rows);
+			var_dump(self::$mysqli->error());*/
 			foreach($rows as $row){
-				$slots[] = new TimeSlot($row['id'], $row['codEvent'], $row['minutes'], $row['day']);
+				$slots[$row['day']][] = new TimeSlot($row['id'], $row['codEvent'], $row['startHour'], $row['minutes'], $row['day']);
 			}
 
 			return $slots;
+		}
+		
+		/** aggiunge una fascia oraria
+		 * @param integer $codEvent il codice dell'evento
+		 * @param string $startHour l'orario di inizio nel formato 0h:0m
+		 * @param integer $minutes i minuti di durata
+		 * @param integer $day il numero del giorno della settimana (1 lun - 7 dom)
+		 */
+		public static function addSlot($codEvent,$startHour,$minutes,$day){
+			$codEvent = intval($codEvent);
+			$startHour = Security::escape($startHour,5);
+			$minutes = abs(intval($minutes));
+			$day = abs(intval($day));
+			$queryInsert = 'INSERT INTO fasciaoraria (codEvent,startHour,minutes,day) VALUES ("'.$codEvent.'","'.$startHour.'","'.$minutes.'","'.$day.'")';
+			if(self::$mysqli->queryDML($queryInsert)==1){
+				return new TimeSlot(self::$mysqli->getInsertId());
+ 	 		}else{
+ 	 			return print_r(self::$mysqli->error());
+ 	 		}
 		}
 
 		/**
@@ -69,12 +98,19 @@
 		}
 
 		/**
-		 * @return integer l'ora d'inizio
+		 * @return date l'orario d'inizio
 		 */
 		public function getStartHour(){
-			return $this->startHour;
+			return date('H:i', strtotime($this->startHour));
 		}
-
+		
+		/**
+		 * @return date l'orario di fine
+		 */
+		public function getEndHour(){
+			return date('H:i', strtotime($this->startHour.' +'.$this->minutes.' minutes'));
+		}
+		
 		/**
 		 * @return integer la durata in minuti
 		 */
@@ -88,7 +124,17 @@
 		public function getDay(){
 			return $this->day;
 		}
-
+		
+		public function getOccupiedSeats(){
+			$sql = "SELECT count(*) as num FROM biglietto WHERE codTimeSlot = ".$this->getId();
+			$rows = self::$mysqli->querySelect($sql);
+			return $rows[0]['num'];
+		}
+		
+		public function getArray(){
+			return array('startHour' => $this->getStartHour(), 'endHour' => $this->getEndHour());	
+		}
+		
 		/**
 		 * Modifica la variabile privata $codEvent
 		 * @param integer $codEvent il codice dell'evento a cui fa riferimento
@@ -127,7 +173,7 @@
 		 */
 		public function merge(){
 			$sql = "UPDATE fasciaoraria SET codEvent=$this->codEvent, startHour=$this->startHour, minutes=$this->minutes, day=$this->day WHERE id=$this->id";
-			return $this->mysqli->queryDML($sql);
+			return self::$mysqli->queryDML($sql);
 		}
 	}
 ?>

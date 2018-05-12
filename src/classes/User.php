@@ -1,33 +1,39 @@
 <?php
 	namespace MMS;
-	require 'Database.php';
+	require_once $_SERVER["DOCUMENT_ROOT"].'/src/includes/autoload.php';
 	use MMS\Database as DB;
 
 	class User{
 
-		private $mysqli;
+		private static $mysqli;
 
 		private $id;
 		private $name;
 		private $email;
 		private $role;
+		private $pwd;
 
 		/**
 		 * Costruttore. Le variabili vengono scaricate dal database
 		 * @param integer $userId l'identificativo numerico dell'utente a cui fare riferimento sulla relazione utente
 		 */
 		function __construct($userId){
-			$this->mysqli = DB::init();
-			$sql = "SELECT * FROM utenti WHERE id = $userId";
-			$userData = $this->mysqli->querySelect($sql);
-			if(count($userData) == 1){
+			self::$mysqli = DB::init();
+			$sql = "SELECT * FROM utente WHERE id = $userId";
+			$userData = self::$mysqli->querySelect($sql);
+			if($userData){
 				$this->id = $userId;
 				$this->name = $userData[0]['name'];
 				$this->email = $userData[0]['mail'];
 				$this->role = $userData[0]['role'];
+				$this->pwd = $userData[0]['pass'];
 			}else{
 				throw new Exception("ID utente non esistente");
 			}
+		}
+		
+		public static function init(){
+			self::$mysqli = DB::init();
 		}
 
 		/**
@@ -56,6 +62,13 @@
 		 */
 		function getRole(){
 			return $this->role;
+		}
+		
+		/**
+		 * @return string l'hash della password (bcrypt)
+		 */
+		function getPass(){
+			return $this->pwd;
 		}
 
 		/**
@@ -89,7 +102,7 @@
 		function setPassword($password){
 			$userId = $this->id;
 			$hash = password_hash($password, PASSWORD_DEFAULT);
-			$this->mysqli->queryDML("UPDATE utenti SET pass = '$hash' WHERE id = $userId");
+			self::$mysqli->queryDML("UPDATE utenti SET pass = '$hash' WHERE id = $userId");
 		}
 		
 		/**
@@ -98,7 +111,28 @@
 		 */
 		function merge(){
 			$sql = "UPDATE utente SET name = '$this->name', mail = '$this->email', role = '$this->role' WHERE id = $this->id";
-			return $this->mysqli->queryDML();
+			return self::$mysqli->queryDML($sql);
+		}
+		
+		/**
+		 * aggiunge un nuovo utente al database
+		 * @param string $newuser nuovo username da inserire
+		 * @param string $newmail nuova email da inserire
+		 * @param string $newpass nuova password criptata
+		 * @param int $newrole nuovo ruolo dell'utente
+		 * @return mixed se l'inserimento dovesse riuscire il nuovo utente, atrimenti false
+		 */
+		public static function addUser($newuser,$newmail,$newpass,$newrole){
+			$msg = 'nouser';
+			if(!Security::userExists($newuser)){
+				$query_insert = "INSERT INTO utente (name,mail,pass,role) VALUES ('$newuser','$newmail','$newpass','$newrole')";
+				if(self::$mysqli->queryDML($query_insert)>0){
+					$msg = new User(self::$mysqli->getInsertId());
+				}else{
+					$msg = self::$mysqli->error();
+				}
+			}			
+			return $msg;
 		}
 	}
 ?>

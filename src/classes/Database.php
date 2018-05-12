@@ -1,5 +1,5 @@
 <?php
-
+	namespace MMS;
 	class Database{
 		private static $instance;
 		private $mysqli;
@@ -8,7 +8,8 @@
 		 * Costruttore vuoto. Crea la connessione con il database
 		 */
 		public function __construct(){
-			$this->mysqli = new mysqli('localhost','5ia22','5ia22','5ia22');
+			$this->mysqli = new \mysqli('localhost','musetek','jEthR2QDnQbi8SgU','mms');
+			$this->mysqli->set_charset('utf8mb4');
 		}
 
 		/**
@@ -16,7 +17,7 @@
 		 */
 		public static function init(){
 			if(is_null(self::$instance)){
-			self::$instance = new Database();
+				self::$instance = new Database();
 			}
 			return self::$instance;
 		}
@@ -26,12 +27,11 @@
 		 * @return mixed se l'operazione è andata a buon fine ritorna un array bidimensionale (array) altrimenti ritorna l'errore (string)
 		 */
 		public function querySelect($query){
-			try{
-				$ris = $this->mysqli->query($query);
+			$ris = $this->mysqli->query($query);
+			if($ris){
 				return $ris->fetch_all(MYSQLI_ASSOC);
-			}catch(Exception $e){
-				return $this->mysqli->error;
 			}
+			return false;
 		}
 
 		/**
@@ -41,9 +41,9 @@
 		public function queryDML($query){
 			try{
 				$this->mysqli->query($query);
-				return $this->mysqli->affectedRows;
+				return $this->mysqli->affected_rows;
 			}catch(Exception $e){
-				return $this->mysqli->error;
+				return $this->error();
 			}
 		}
 
@@ -56,7 +56,7 @@
 				$ris = $this->mysqli->query($query);
 				return $ris->num_rows;
 			}catch(Exception $e){
-				return $this->mysqli->error;
+				return $this->error();
 			}
 		}
 
@@ -65,6 +65,20 @@
 		 */
 		public function error(){
 			return $this->mysqli->error_list;
+		}
+		
+		/**
+		 * @return mysqli l'istanza di mysqli
+		 */
+		public function getObj(){
+			return $this->mysqli;
+		}
+		
+		/**
+		 * @return insert_id
+		 */
+		public function getInsertId(){
+			return $this->mysqli->insert_id;
 		}
 	}
 ?>
