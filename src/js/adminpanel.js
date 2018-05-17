@@ -6,6 +6,11 @@ $(document).ready(function() {
 		var href = $(this).attr('href');
 		getPageContent(href, true);
 	});
+	
+	$(document).on('click', '#menu-toggle', function(e){
+		e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+	});
 
 	window.onpopstate = function() {
 		dashFromUrl(false);

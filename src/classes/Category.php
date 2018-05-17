@@ -10,6 +10,7 @@
         private $name;
         private $discount;
         private $docType;
+        private $priority;
         
         
         /** funzione costruttore
@@ -18,12 +19,13 @@
 		 */
         public function __construct($id){
             self::$mysqli = DB::init();
-            $cat = self::$mysqli->querySelect('select * from categoria where id='.$id);
-			if (count($cat) == 1){
+            $cat = self::$mysqli->querySelect('SELECT * FROM categoria WHERE id='.$id);
+		    if(count($cat) == 1){
             	$this->id = $cat[0]['id'];
             	$this->name = $cat[0]['name'];
             	$this->discount = $cat[0]['discount'];
             	$this->docType = $cat[0]['docType'];
+            	$this->priority = $cat[0]['priority'];
 			}else{
 				throw new Exception('Id non valido');
 			}
@@ -65,6 +67,10 @@
             return $this->docType;
         }
         
+        public function getPriority(){
+            return $this->priority;
+        }
+        
         /** funzione setName
          * modifica il nome della categoria
          * @param $newName nuovo nome della categoria
@@ -87,6 +93,10 @@
          */
         public function setDocType($newDocType){
             $this->docType = $newDocType;
+        }
+        
+        public function setPriority($priority){
+            $this->priority = $priority;
         }
         
         /** funzione merge
@@ -117,12 +127,24 @@
         }
         
         public static function getCategoryList(){
-            $sql = "SELECT * FROM categoria ORDER by priority";
+            $sql = "SELECT * FROM categoria ORDER by priority, id";
             $rows = self::$mysqli->querySelect($sql);
             $result = array();
-            foreach($rows as $cat)
+            foreach($rows as $cat){
                 $result[] = new Category($cat['id']);
+            }
             return $result;
         }
+        
+        public static function getCategoryListArray(){
+            $sql = "SELECT * FROM categoria ORDER by priority, id";
+            $rows = self::$mysqli->querySelect($sql);
+            $result = array();
+            foreach($rows as $cat){
+                $result[] = $cat;
+            }
+            return $result;
+        }
+        
     }//class
 ?>

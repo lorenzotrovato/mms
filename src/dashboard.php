@@ -27,6 +27,7 @@
     
         <!-- Custom styles for this template -->
         <link href="./css/dashboard.css" rel="stylesheet">
+        <link rel="icon" type="image/png" href="./favicon.png"/>
     </head>
     
     <body>
@@ -35,10 +36,10 @@
                 include './includes/header.php';
             ?>
         </div>
-    
         <div class="container-fluid">
+            <a href="#menu-toggle" class="btn btn-secondary offset-lg-2 offset-md-3 offset-sm-4 offset-6" id="menu-toggle" style="margin-top: 6px; left: 3px; line-height: 30px"><span data-feather="arrow-left" style="width: 22px; height: 22px"></span></a>
             <div class="row">
-                <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+                <nav id="wrapper" class="col-lg-2 col-md-3 col-sm-4 col-6 bg-light sidebar">
                     <div class="sidebar-sticky">
                         <ul class="nav flex-column">
                             <li class="nav-item">
@@ -103,7 +104,6 @@
                         </ul>-->
                     </div>
                 </nav>
-    
                 <main id="mainsection" role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
                 </main>
             </div>

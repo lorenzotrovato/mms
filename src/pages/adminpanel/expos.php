@@ -41,6 +41,10 @@
 	.timeslotOpen {
 		background-color: #a5d6a7;
 	}
+	
+	.fileInput{
+		border: 1px solid #bec5cc;
+	}
 </style>
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
@@ -84,14 +88,14 @@
 		</div>
 		<div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
 			<div class="form-group">
-				<label for="maxSeatsExpo">Numero massimo di posti</label>
-				<input type="number" class="form-control" id="maxSeatsExpo" placeholder="Posti massimi" step="1" min="1">
+				<label for="maxSeatsExpo">Numero massimo di posti/fascia oraria</label>
+				<input type="number" class="form-control" id="maxSeatsExpo" placeholder="Posti massimi per fascia oraria" step="1" min="1">
 			</div>
 		</div>
 	</div>
 	<div class="form-row border">
 		<div class="col-12">
-			<h5><small class="text-muted">Aggiungi orari di apertura</small></h5>
+			<h5><small class="text-muted">Aggiungi orari di apertura (fasce orarie)</small></h5>
 		</div>
 		<br>
 		<div class="col-sm-12 col-md-3 col-lg-2 col-xl-2">
@@ -125,6 +129,30 @@
 		</div>
 	</div>
 	<br>
+	<div class="form-row border">
+		<div class="col-12">
+			<h5><small class="text-muted">Modifica immagine di copertina</small></h5>
+		</div>
+		<br>
+		<div class="col-12 col-sm-12 col-md-6 col-xl-2">
+		  	<div class="custom-file">
+			    <input type="file" class="custom-file-input" id="fileImageExpo" required>
+			    <label class="custom-file-label" for="fileImageExpo">Scegli file...</label>
+		  	</div>
+		</div>
+		<div class="col-12 col-sm-12 col-md-6 col-xl-2">
+			<img src="" alt="Immagine esposizione" id="expoImage" class="d-none">
+			<strong id="expoImagePrev" class="">Nessuna immagine</strong>
+		</div>
+		<div class="col-12 col-sm-12 col-md-12 col-xl-8">
+			<h6 id="expoImageLoadLabel">Caricamento immagine: in attesa</h6>
+			<div class="progress">
+			  	<div class="progress-bar" id="expoImageLoadProg" style="width:00%"></div>
+			</div>
+			<br>
+		</div>
+	</div>
+	<br>
 	<div class="form-row">
 		<div class="col-12 text-center">
 			<button class="btn btn-danger m-1" id="btnResetExpoForm" style="width: 300px;">Resetta il form</button>
@@ -136,32 +164,35 @@
 <br>
 <br>
 <h2><small class="text-muted">Modifica e visualizza le esposizioni</small></h2>
-<table class="table">
-	<thead class="thead-dark">
-		<th>#</th>
-		<th>Nome</th>
-		<th>Descrizione</th>
-		<th>Data d'inizio</th>
-		<th>Data di fine</th>
-		<th>Prezzo base [€]</th>
-		<th>Posti massimi</th>
-		<th></th>
-		<th></th>
-	</thead>
-	<tbody id="tableExpoList">
-		<tr>
-			<td>0</td>
-			<td><strong>Nessuna esposizione</strong></td>
-			<td>N/D</td>
-			<td>N/D</td>
-			<td>N/D</td>
-			<td>N/D</td>
-			<td>N/D</td>
-			<td></td>
-			<td></td>
-		</tr>
-	</tbody>
-</table>
+<div id="deleteExpoErr" class="alert col-12 col-md-6 offset-md-3 d-none text-center"></div>
+<div class="table-responsive">
+	<table class="table">
+		<thead class="thead-dark">
+			<th>#</th>
+			<th>Nome</th>
+			<th>Descrizione</th>
+			<th>Data d'inizio</th>
+			<th>Data di fine</th>
+			<th>Prezzo base [€]</th>
+			<th>Posti massimi</th>
+			<th></th>
+			<th></th>
+		</thead>
+		<tbody id="tableExpoList">
+			<tr>
+				<td>0</td>
+				<td><strong>Nessuna esposizione</strong></td>
+				<td>N/D</td>
+				<td>N/D</td>
+				<td>N/D</td>
+				<td>N/D</td>
+				<td>N/D</td>
+				<td></td>
+				<td></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
 
 <div class="modal fade" id="modalDeleteExpo" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog" role="document">
@@ -187,3 +218,7 @@
 <!-- Icons -->
 <script src="./js/feather.min.js"></script>
 <script src="./js/expos.js"></script>
+
+<script>
+	
+</script>

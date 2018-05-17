@@ -1,10 +1,12 @@
 <?php
  	namespace MMS;
     require_once $_SERVER["DOCUMENT_ROOT"].'/src/includes/autoload.php';
+    use MMS\Accessory as Accessory;
 	use MMS\Database as DB;
+	use MMS\Security as Security;
 	
 	class Accessory{
-		private $mysqli;
+		private static $mysqli = null;
 		
 		private $id;
 		private $name;
@@ -18,8 +20,10 @@
 		 * @param $id id dell'accessorio aggiuntivo
 		 */
 		public function __construct($id) {
-			$this->mysqli = DB::init();
-			$acc = $this->mysqli->querySelect('select * from acessorio where id='.$id);
+			if(is_null(self::$mysqli)){
+				self::$mysqli = DB::init();
+			}
+			$acc = self::$mysqli->querySelect('select * from accessorio where id='.$id);
 			if (count($acc) == 1){
 				$this->id = $acc[0]['id'];
 				$this->name = $acc[0]['name'];
@@ -31,6 +35,10 @@
 				throw new Exception('Id non valido');
 			}
 		}
+		
+		public static function init(){
+ 	 		self::$mysqli = DB::init();
+ 	 	}
 		
 		/** funzione getId
 		 * restituisce l'id dell'accessorio
@@ -131,7 +139,7 @@
 			$type = $this->type;
 			$nAvailable = $this->nAvailable;
 			$returnable = $this->returnable;
-			return $this->mysqli->queryDML("update accessorio set name='$name', price='$price', type='$type', nAvailable='$nAvailable', returnable='$returnable' where id='$id'") > 0;
+			return self::$mysqli->queryDML("update accessorio set name='$name', price='$price', type='$type', nAvailable='$nAvailable', returnable='$returnable' where id='$id'") > 0;
 		}
 		
 		/**
@@ -144,15 +152,16 @@
 		 * @return l'oggetto contenente il nuovo accessorio inserito nel DB
 		 */
 		public static function insAccessory($name, $price, $type, $nAvailable, $returnable) {
-			$db = DB::init();
-			$n = $db->getObj()->real_escape_string($name);
+			Security::init();
+			self::init();
+			$n = Security::escape($name);
 			$p = (is_numeric($price) ? $price : 0);
 			$t = (is_numeric($type) ? (($type < 1) ? 'accessorio' : 'servizio') : (($type == 'servizio') ? 'servizio' : 'accessorio'));
 			$a = ((is_numeric($nAvailable) && $nAvailable >= 0) ? $nAvailable : 0); 
 			$r = ($returnable == 'true' ? 1 : 0);
 			$sql = "INSERT INTO accessorio (name, price, type, nAvailable, returnable) VALUES ('$n', $p, '$t', $a, $r)";
-			if($db->queryDML($sql) > 0) {
-				return new Accessory($db->getInsertId());
+			if(self::$mysqli->queryDML($sql) > 0) {
+				return new Accessory(self::$mysqli->getInsertId());
 			}
 			return false;
 		}
@@ -162,9 +171,24 @@
 			$rows = self::$mysqli->querySelect($sql);
 			$result = array();
 			foreach($rows as $acc){
-				$result[] = new Accessory($acc['id']);
+				$result [] = new Accessory($acc['id']);
 			}
 			return $result;
+		}
+		
+		public static function getAccessoryListArray(){
+			$sql = "SELECT * FROM accessorio";
+			$rows = self::$mysqli->querySelect($sql);
+			$result = array();
+			foreach($rows as $acc){
+				$result [] = $acc;
+			}
+			return $result;
+		}
+		
+		public function deleteAccessory(){
+			$this->nAvailable = 0;
+			return $this->merge();
 		}
 	}//class
 ?>

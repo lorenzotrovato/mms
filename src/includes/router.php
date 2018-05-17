@@ -6,6 +6,7 @@
 	use MMS\Accessory as Accessory;
 	use MMS\Database as DB;
 	use MMS\TimeSlot as TimeSlot;
+	use MMS\Category as Category;
 	
 	// se non è impostata la variabile che definisce l'azione chiudo lo script
 	isset($_GET['action']) ?: die();
@@ -58,16 +59,22 @@
 				header('location: ../signin.php?err_mail_ver=3');
 			}
 			break;
-		case 'getEventInfo':
+		case 'getBuyNeeds':
 			if(!empty($_GET['eventid'])){
 				$id=$_GET['eventid'];
 				$expo = new Expo($id);
+				Category::init();
+				Accessory::init();
 				$array = array(
 					'name' => $expo->getName(),
 					'startDate' => $expo->getStartDate(),
 					'endDate' => $expo->getEndDate(),
 					'price' => $expo->getPrice(),
-					'timeSlots' => array()
+					'maxSeats' => $expo->getMaxSeats(),
+					'occupiedSeats' => $expo->getOccupiedSeats(),
+					'timeSlots' => array(),
+					'categories' => Category::getCategoryListArray(),
+					'accessories' => Accessory::getAccessoryListArray()
 				);
 				$timeslots = $expo->getTimeSlots();
 				for($i = 1; $i <= 7; $i++){
@@ -76,7 +83,8 @@
 						$array['timeSlots'][$i][] = $slot->getArray();
 					}
 				}
-				echo json_encode($array, 1);
+				echo json_encode($array);
+				//print_r(Category::getCategoryList());
 			}
 			break;
 		case 'finTable':
@@ -133,81 +141,118 @@
 		   	echo json_encode($datiGrafico);
 			break;
 		case 'addExpo':
-			if(empty($_GET['nomeExpo']) || empty($_GET['descExpo']) || empty($_GET['dateStartExpo']) || empty($_GET['dateEndExpo']) || empty($_GET['priceExpo']) || empty($_GET['maxSeatsExpo'])){
-				die('riempi tutti i campi');
-			}
-			$newExpo = Expo::addExpo($_GET['nomeExpo'],$_GET['descExpo'],$_GET['dateStartExpo'],$_GET['dateEndExpo'],$_GET['priceExpo'],$_GET['maxSeatsExpo']);
-			if($newExpo instanceof Expo){
-				//aggiunta fascie orarie
-				if(isset($_GET['timeslots'])){
-					try{
-						TimeSlot::init();
-						foreach($_GET['timeslots'] as $dkey => $day){
-							foreach($day as $ts){
-								if(!is_null($ts)){
-									TimeSlot::addSlot($newExpo->getId(),$ts["startHour"],$ts["minutes"],str_replace("day","",$dkey));
-								}
-							}
-						}
-					}catch(\Exception $e){
-						die($e->getMessage());
-					}
+			if(Security::isAdmin()){
+				if(empty($_GET['nomeExpo']) || empty($_GET['descExpo']) || empty($_GET['dateStartExpo']) || empty($_GET['dateEndExpo']) || empty($_GET['priceExpo']) || empty($_GET['maxSeatsExpo'])){
+					die('riempi tutti i campi');
 				}
-				echo 'success';
-			}else{
-				echo $newExpo;
-			}
-			break;
-		case 'editExpo':
-			if(empty($_GET['idExpo']) || empty($_GET['nomeExpo']) || empty($_GET['descExpo']) || empty($_GET['dateStartExpo']) || empty($_GET['dateEndExpo']) || empty($_GET['priceExpo']) || empty($_GET['maxSeatsExpo'])){
-				die('riempi tutti i campi');
-			}
-			try{
-				$expo = new Expo($_GET['idExpo']);
-				if($expo instanceof Expo){
-					Security::init();
-					$mysqli = Database::init();
-					$expo->setName(Security::escape($_GET['nomeExpo'],63));
-					$expo->setDescription(Security::escape($_GET['descExpo']));
-					$expo->setStartDate($_GET['dateStartExpo']);
-					$expo->setEndDate($_GET['dateEndExpo']);
-					$expo->setPrice(floatval(abs($_GET['priceExpo'])));
-					$expo->setMaxSeats(intval(abs($_GET['maxSeatsExpo'])));
-					
-					//riaggiunta fascie orarie
+				$newExpo = Expo::addExpo($_GET['nomeExpo'],$_GET['descExpo'],$_GET['dateStartExpo'],$_GET['dateEndExpo'],$_GET['priceExpo'],$_GET['maxSeatsExpo']);
+				if($newExpo instanceof Expo){
+					//aggiunta fascie orarie
 					if(isset($_GET['timeslots'])){
-						$timeslots = $_GET['timeslots'];
 						try{
 							TimeSlot::init();
-							foreach($timeslots as $dkey => $day){
+							foreach($_GET['timeslots'] as $dkey => $day){
 								foreach($day as $ts){
 									if(!is_null($ts)){
-										$nts = new TimeSlot($ts['id']);
-										if($nts instanceof TimeSlot){
-											$nts->setStartHour($ts["startHour"]);
-											$nts->setMinutes($ts["minutes"]);
-											$nts->setDay(str_replace("day","",$dkey));
-											$nts->merge();
-										}else{
-											TimeSlot::addSlot($expo->getId(),$ts["startHour"],$ts["minutes"],str_replace("day","",$dkey));
-										}
+										TimeSlot::addSlot($newExpo->getId(),$ts["startHour"],$ts["minutes"],str_replace("day","",$dkey));
 									}
 								}
 							}
-							die(var_dump($mysqli->error()));
 						}catch(\Exception $e){
 							die($e->getMessage());
 						}
-					}else{
-						die(var_dump($_GET));
 					}
-					$expo->merge();
-					echo 'success-edit';
+					echo 'success'.$newExpo->getId();
 				}else{
-					echo $expo;
+					echo $newExpo;
 				}
-			}catch(\Exception $e){
-				die($e->getMessage());
+			}
+			break;
+		case 'editExpo':
+			if(Security::isAdmin()){
+				if(empty($_GET['idExpo']) || empty($_GET['nomeExpo']) || empty($_GET['descExpo']) || empty($_GET['dateStartExpo']) || empty($_GET['dateEndExpo']) || empty($_GET['priceExpo']) || empty($_GET['maxSeatsExpo'])){
+					die('riempi tutti i campi');
+				}
+				try{
+					$expo = new Expo($_GET['idExpo']);
+					if($expo instanceof Expo){
+						Security::init();
+						$mysqli = Database::init();
+						$expo->setName(Security::escape($_GET['nomeExpo'],63));
+						$expo->setDescription(Security::escape($_GET['descExpo']));
+						$expo->setStartDate($_GET['dateStartExpo']);
+						$expo->setEndDate($_GET['dateEndExpo']);
+						$expo->setPrice(floatval(abs($_GET['priceExpo'])));
+						$expo->setMaxSeats(intval(abs($_GET['maxSeatsExpo'])));
+						
+						//riaggiunta fascie orarie
+						if(isset($_GET['timeslots'])){
+							$timeslots = $_GET['timeslots'];
+							try{
+								TimeSlot::init();
+								$tslog = "Start ts log";
+								for($i = 1; $i <=7; $i++){
+									$day = $timeslots[$i];
+									$dkey = $i;
+									foreach($day as $ts){
+										$tslog.="
+											Giorno ".$dkey . " e la fascia oraria";
+										if(!is_null($ts)){
+											$tslog.="
+												Esistente";
+											$nts = new TimeSlot($ts['id']);
+											if($nts instanceof TimeSlot && ($nts->getId()!=null && $nts->getId()!="")){
+												$tslog.="
+													Modifica fascia oraria ".$nts->getId();
+												if(intval(abs($ts["minutes"]))>0 || $nts->hasTickets()){
+													$nts->setStartHour(date('H:i:s',strtotime($ts["startHour"])));
+													$nts->setMinutes(intval(abs($ts["minutes"])));
+													$nts->setDay(intval(abs($dkey)));
+													$tslog.= "
+													" . $nts->getStartHour();
+													$tslog.= "
+													". $nts->merge();
+												}else{
+													$nts->deleteSlot();
+												}
+											}else{
+												$tslog.="
+													Aggiunta fascia oraria ";
+												TimeSlot::addSlot($expo->getId(),date('H:i:s',strtotime($ts["startHour"])),intval(abs($ts["minutes"])),intval(abs($dkey)));
+											}
+										}
+									}
+								}
+							}catch(\Exception $e){
+								die($e->getMessage());
+							}
+						}
+						$expo->merge();
+						echo 's-edit';
+						//echo $tslog;
+					}else{
+						echo $expo;
+					}
+				}catch(\Exception $e){
+					die($e->getMessage());
+				}
+			}
+			break;
+		case 'deleteExpo':
+			if(Security::isAdmin()){
+				if(empty($_GET['expoid'])){
+					die('dati esposizione non validi');
+				}
+				$nxp = new Expo(Security::escape($_GET['expoid']));
+				if($nxp instanceof Expo && $nxp->getId()!=null){
+					if($nxp->deleteExpo()){
+						echo 'delete-success';
+					}else{
+						echo 'delete-error';
+					}
+				}else{
+					die('l\'esposizione non esiste');
+				}
 			}
 			break;
 		case 'addAccessory':
@@ -223,30 +268,25 @@
 			}
 			break;
 		case 'accTable':
-			$mysqli = DB::init();
-			$accs = $mysqli->querySelect("SELECT * FROM accessorio");
-			print_r($accs);
-			$tbody = '';
-			for($i = 0; $i < count($accs); $i++){
-				/*$acc = $accs[$i];
-				$tbody .= '	<tr>
-								<th scope="row">'.($i+1).'</th>
-								<td><b class="text-bold '.(($acc['type'] == 'servizio') ? 'text-primary' : 'text-warning').'" data-toggle="tooltip" data-placement="top" title="'.(($acc['type']=='servizio') ? 'Servizio' : 'Accessorio').'">'.$acc['name'].'</b></td>
-								
-						';
-				
-			*/
-				echo '<tr>';
-				echo '<th role="row">'.($i+1).'</th>';
-				echo '<td><b '.($accs[$i]['type'] == 'servizio' ? 'class="text-primary text-bold" data-toggle="tooltip" data-placement="top" title="Servizio">' : 'class="text-warning text-bold" data-toggle="tooltip" data-placement="top" title="Accessorio">').$accs[$i]['name'].'</b></td>';
-				echo '<td>'.$accs[$i]['price'].'</td>';
-				echo '<td>'.$accs[$i]['nAvailable'].'</td>';
-				echo '<td class="text-center">'.($accs[$i]['returnable'] ? '<i class="text-success" data-feather="check-circle"></i>' : '<i data-feather="circle"></i>').'</td>';
-				echo '	<td class="text-center">
-							<a class="accEditBtn handCursor text-info text-weight-bold mr-3"><i data-feather="edit"></i></a>
-					  		<a class="accDelBtn handCursor text-danger text-weight-bold ml-3" onclick="console.log(\'sis\');"><i data-feather="x"></i></a>
-					  	</td>';
-				echo '</tr>';
+			if (Security::isAdmin()){
+				Accessory::init();
+				$accessories = Accessory::getAccessoryList();
+				$tbody = '';
+				for($i = 0; $i < count($accessories); $i++){
+					$acc = $accessories[$i];
+					$tbody .= '	<tr>
+									<th scope="row">'.($i+1).'</th>
+									<td id="'.$acc->getId().'acctitle"><b class="text-bold '.(($acc->getType() == 'servizio' )? 'text-primary' : 'text-warning').'" data-toggle="tooltip" data-placement="top" title="'.(($acc->getType() == 'servizio' )? 'Servizio' : 'Accessorio').'">'.$acc->getName().'</b></td>
+									<td id="'.$acc->getId().'accprice">'.$acc->getPrice().'</td>
+									<td id="'.$acc->getId().'accnavailable" '.(($acc->getNAvailable() == 0) ? 'class="text-danger font-weight-bold"' : '').'>'.(($acc->getNAvailable() == 0) ? 'Accessorio eliminato' : $acc->getNAvailable()).'</td>
+									<td id="'.$acc->getId().'accreturnable" class="text-center"><span class="'.($acc->getReturnable() ? 'text-success' : '').'" data-feather="'.($acc->getReturnable() ? 'check-circle' : 'circle').'"></span></td>
+									<td class="text-center">
+										<a class="accEditBtn handCursor text-info text-weight-bold mr-3" onclick="loadEditAccForm('.$acc->getId().')"><span data-feather="edit"></span></a>
+										<a class="accDelBtn handCursor text-danger text-weight-bold ml-3'.(($acc->getNAvailable() == 0) ? 'd-none' : '').'" onclick="loadDeleteAccModal('.$acc->getId().')"><span data-feather="x"></span></a>
+									</td>
+								</tr>';
+				}
+				echo $tbody;
 			}
 			break;
 		case 'addCategory':
@@ -277,8 +317,16 @@
 			    		}else{
 			    			$coloreRiga = '';
 			    		}
+			    		$md5 = md5($event->getId());
+			    		if(is_file('/var/www/html/src/images/covers/'.$md5.'.png')){
+			    			$img = $md5.'.png';
+			    		}elseif(is_file('/var/www/html/src/images/covers/'.$md5.'.jpg')){
+			    			$img = $md5.'.jpg';
+			    		}else{
+			    			$img = "";
+			    		}
 			    		$popover = '<span data-container="body" data-toggle="popover" data-placement="right" data-content="'.$event->getDescription().'">';
-				    	$tbody .= "	<tr id=\"".$event->getId()."expocontainer\" class=\"expocontainer\">
+				    	$tbody .= "	<tr id=\"".$event->getId()."expocontainer\" class=\"expocontainer\" data-coverimage=\"".$img."\">
 				    					<th scope='row'>".($i+1)."</th>
 				    					<td id=\"".$event->getId()."expotitle\" class=\"".$coloreRiga."\"><strong>".(strlen($event->getName())>50 ? substr($event->getName(),0,50) . "..." : $event->getName())."</strong></td>
 				    					<td id=\"".$event->getId()."expodesc\" class=\"tdExpoDesc\" data-alldesc=\"".$event->getDescription()."\">".(strlen($event->getDescription())>70 ? $popover . substr($event->getDescription(),0,70) . "..." : $event->getDescription())."</span></td>
@@ -302,11 +350,11 @@
 				$ret = array();
 				foreach($events as $event){
 					$tslots = $event->getTimeSlots();
-					$ret['event'.$event->getId()] = array();
+					$ret[$event->getId()] = null;
 					foreach($tslots as $ts){
 						foreach($ts as $day){
 							//$days = array('1'=>'Lun','2'=>'Mar','3'=>'Mer','4'=>'Gio','5'=>'Ven','6'=>'Sab','7'=>'Dom');
-							$ret['event'.$event->getId()]['day'.$day->getDay()] []= array('id'=>$day->getId(),'startHour'=>$day->getStartHour(),'minutes'=>$day->getMinutes());
+							$ret[$event->getId()][$day->getDay()] []= array('id'=>$day->getId(),'startHour'=>$day->getStartHour(),'minutes'=>$day->getMinutes());
 						}
 					}
 				}
@@ -352,6 +400,61 @@
 			        }
 			    }
 			    echo json_encode($datiGrafico);
+			}
+			break;
+		case 'deleteAcc':
+			if (Security::isAdmin()){
+				$acc = new Accessory(Security::escape($_GET['id']));
+				if ($acc->deleteAccessory()){
+					echo 'success';
+				}else{
+					echo 'fail';
+				}
+			}
+			break;
+		case 'loadDocTypes':
+			if (Security::isAdmin()){
+				$options = '<option disabled selected value>Scegli un documento</option>';
+				$mysqli = Database::init();
+				$sql = "SELECT DISTINCT docType FROM categoria";
+				$dTs = $mysqli->querySelect($sql);
+				foreach($dTs as $dT){
+					if ($dT['docType'] != ''){
+						$options .= '<option>'.$dT['docType'].'</option>';
+					}
+				}
+				echo $options;
+			}
+			break;
+		case 'editProfileInfo':
+			if(Security::verSession()){
+				if(!empty($_GET['newmail']) && !empty($_GET['newpsw'])){
+					$user = Security::getUserFromSession();
+					$newmail = Security::escape($_GET['newmail'],255);
+					$newpsw = Security::escape($_GET['newpsw']);
+					$oldmail = $user->getMail();
+					$oldrole = $user->getRole();
+					$changedmail = false;
+					if($user->getMail()!=$newmail){
+						$user->setMail($newmail);
+						$changedmail = true;
+						$user->setRole(0);
+						$user->merge();
+						if(!Security::sendVerMail($user)){
+							$user->setMail($oldmail);
+							$user->setRole($oldrole);
+							$user->merge();
+							die(json_encode(array('message'=>'impossibile inviare la mail di verifica')));
+						}
+					}
+					if($newpsw!="password"){
+						$user->setPassword($newpsw);
+					}
+					Security::removeAutoLoginCookies($user);
+					echo json_encode(array('message'=>'success-edit-profile','changedmail'=>$changedmail));
+				}else{
+					die(json_encode(array('message'=>'riempi tutti i campi')));
+				}
 			}
 			break;
 	}

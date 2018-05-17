@@ -21,6 +21,7 @@
 		<link href="./css/style.css" rel="stylesheet">
 		<!-- Custom styles for this template -->
 		<link href="./css/cover.css" rel="stylesheet">
+		<link rel="icon" type="image/png" href="./favicon.png"/>
 	</head>
 
 	<body class="text-center">
@@ -30,7 +31,7 @@
 			?>
 			<main role="main">
 				<div class="row">
-					<div class="col-12 col-md-12 col-lg-8 offset-lg-2 mt-4 mb-3">
+					<div class="col-12 col-md-12 col-lg-10 col-xl-8 offset-lg-1 offset-xl-2 mb-3">
 						<h2> Dove siamo?</h2>
 						<p>Via Luigi Pettinati, 46, Padova (PD)</p>
 						<hr class="invisible">
@@ -161,5 +162,9 @@
 
 		<script src="./js/jquery-3.3.1.min.js"></script>
 		<script src="./js/bootstrap.bundle.min.js"></script>
+		<script src="./js/feather.min.js"></script>
+		<script>
+			feather.replace();
+		</script>
 	</body>
 </html>

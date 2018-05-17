@@ -2,6 +2,7 @@
 	namespace MMS;
 	require_once $_SERVER["DOCUMENT_ROOT"].'/src/includes/autoload.php';
 	use MMS\Database as DB;
+	use MMS\Ticket as Ticket;
 
 	class User{
 
@@ -102,7 +103,8 @@
 		function setPassword($password){
 			$userId = $this->id;
 			$hash = password_hash($password, PASSWORD_DEFAULT);
-			self::$mysqli->queryDML("UPDATE utenti SET pass = '$hash' WHERE id = $userId");
+			self::$mysqli->queryDML("UPDATE utente SET pass = '$hash' WHERE id = $userId");
+			$this->pwd = $hash;
 		}
 		
 		/**
@@ -133,6 +135,24 @@
 				}
 			}			
 			return $msg;
+		}
+		
+		/**
+		 * @return array un array dei biglietti acquistati dall'utente
+		 */
+		public function getUserTickets(){
+			$tickets = array();
+			$allts = self::$mysqli->querySelect('SELECT * FROM biglietto WHERE codUser="'.$this->id.'"');
+			Ticket::init();
+			for($i=0;$i<count($allts);$i++){
+				try{
+					array_push($tickets,new Ticket($allts[$i]['id']));
+				}catch(Exception $e){
+					
+				}
+			}
+			//var_dump($tickets);
+			return $tickets;
 		}
 	}
 ?>

@@ -23,6 +23,7 @@
 		
 		<!-- Custom styles for this template -->
 		<link href="./css/auth.css" rel="stylesheet">
+		<link rel="icon" type="image/png" href="./favicon.png"/>
 	</head>
 	
 	<body>

@@ -37,6 +37,7 @@
 		
 		
 		<link href="./css/style.css" rel="stylesheet">
+		<link rel="icon" type="image/png" href="./favicon.png"/>
 	</head>
 	
 	<body>

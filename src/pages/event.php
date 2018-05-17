@@ -38,6 +38,10 @@
 		}
 		return $day;
 	}
+	$image = 'images/covers/'.md5($id).'.jpg';
+	if(!is_file(realpath(__DIR__ . '/..').'/'.$image)){
+		$image = 'images/covers/'.md5($id).'.png';
+	}
 ?>
 <div class="event-info">
 	<div>
@@ -50,7 +54,7 @@
 	</div>
 	<div class="row">
 		<div class="col col-12 col-md-6 col-lg-7">
-			<img src="images/covers/<?=md5($id)?>.jpg" class="rounded mb-3" style="width: 100%; height: auto;">
+			<img src="<?=$image?>" class="rounded mb-3" style="width: 100%; height: auto;">
 		</div>
 		<div class="col col-12 col-md-6 col-lg-5">
 			<?php
@@ -77,7 +81,7 @@
 											echo'
 											<tr>
 												<th scope="row">'.$slot->getStartHour().' - '.$slot->getEndHour().'</th>
-												<td>'.($expo->getMaxSeats() - $slot->getOccupiedSeats()).' posti disponibili</td>
+												<td>'.$expo->getMaxSeats().' posti totali</td>
 											</tr>';		
 										}
 									?>
@@ -89,6 +93,38 @@
 				<?php } ?>
 			</div>
 		</div>
+	</div>
+	<div class="row">
+		<table class="table">
+			<thead>
+				<tr>
+				<th scope="col">#</th>
+				<th scope="col">First</th>
+				<th scope="col">Last</th>
+				<th scope="col">Handle</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<th scope="row">1</th>
+					<td>Mark</td>
+					<td>Otto</td>
+					<td>@mdo</td>
+				</tr>
+				<tr>
+					<th scope="row">2</th>
+					<td>Jacob</td>
+					<td>Thornton</td>
+					<td>@fat</td>
+				</tr>
+				<tr>
+					<th scope="row">3</th>
+					<td>Larry</td>
+					<td>the Bird</td>
+					<td>@twitter</td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
 	<div class="btn-container-info">
 		<button type="button" class="btn btn-secondary discover-btn d-inline ml-1">Chiudi</button>

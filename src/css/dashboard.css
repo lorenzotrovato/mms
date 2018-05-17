@@ -3,7 +3,7 @@ body {
 	overflow-y: hidden;
 }
 
-.feather {
+.sidebar-sticky .feather {
 	width: 16px;
 	height: 16px;
 	vertical-align: text-bottom;
@@ -147,6 +147,25 @@ body {
 	position: absolute;
 	height: calc(100% - 68px);
 	overflow-y: auto;
+}
+
+#menu-toggle{
+	display: none;
+}
+
+@media screen and (max-width: 768px){
+	#wrapper{
+		margin-left: -100%;
+		transition: all 0.5s linear;
+	}
+	
+	#wrapper.toggled{
+		margin-left: 0px;
+	}
+	
+	#menu-toggle{
+		display: inline-block;
+	}
 }
 
 @media (min-width: 48em) {

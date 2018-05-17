@@ -2,11 +2,12 @@
 	<div class="inner">
 		<a href="index.php" id="logo" class="position-absolute"><h3 class="masthead-brand">M</h3></a>
 		<nav class="nav nav-masthead justify-content-center">
-			<a class="nav-link <?=(PAGENAME == 'home' ? 'active' : '')?>" href="./">Home</a>
-			<?=(!MMS\Security::isAdmin() ? '' : '<a class="nav-link '.(PAGENAME == 'dashboard' ? 'active' : '').'" href="./dashboard.php">Dashboard</a>')?>
-			<a class="nav-link <?=(PAGENAME == 'events' ? 'active' : '')?>" href="./events.php">Eventi</a>
-			<a class="nav-link <?=(PAGENAME == 'aboutus' ? 'active' : '')?>" href="./aboutus.php">Contatti</a>
-			<?=(!MMS\Security::verSession() ? '' : '<a class="nav-link" href="./logout.php">Esci</a>')?>
+			<a class="nav-link <?=(PAGENAME == 'home' ? 'active' : '')?>" href="./"><span class="d-none d-md-block">Home</span><i class="d-md-none d-block" data-feather="home"></i></a>
+			<?=(!MMS\Security::verSession() ? '' : '<a class="nav-link '.(PAGENAME == 'aboutme' ? 'active' : '').'" href="./aboutme.php"><span class="d-none d-md-block">Il mio profilo</span><i class="d-md-none d-block" data-feather="user"></i></a>')?>
+			<?=(!MMS\Security::isAdmin() ? '' : '<a class="nav-link '.(PAGENAME == 'dashboard' ? 'active' : '').'" href="./dashboard.php"><span class="d-none d-md-block">Dashboard</span><i class="d-md-none d-block" data-feather="clipboard"></i></a>')?>
+			<a class="nav-link <?=(PAGENAME == 'events' ? 'active' : '')?>" href="./events.php"><span class="d-none d-md-block">Eventi</span><i class="d-md-none d-block" data-feather="book-open"></i></a>
+			<a class="nav-link <?=(PAGENAME == 'aboutus' ? 'active' : '')?>" href="./aboutus.php"><span class="d-none d-md-block">Contatti</span><i class="d-md-none d-block" data-feather="phone"></i></a>
+			<?=(!MMS\Security::verSession() ? '' : '<a class="nav-link" href="./logout.php"><span class="d-none d-md-block">Esci</span><i class="d-md-none d-block" data-feather="log-out"></i></a>')?>
 		</nav>
 	</div>
 </header>

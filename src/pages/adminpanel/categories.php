@@ -37,12 +37,11 @@
         <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
 			<div class="form-group">
 				<label for="docTypeCat">Documento da esibire</label>
-				<select class="form-control custom-select" id="docTypeCat">
-				    <option disabled selected value> Scegli </option>
-					<option>Carta d'identità</option>
-					<option>Carta del museo</option>
-					<!-- altri documenti... -->
-				</select>
+				<div class="input-group">
+					<input type="text" class="form-control" id="customDocTypeCat" placeholder="Nuovo documento">
+					<select class="form-control custom-select" id="docTypeCat">
+					</select>
+				</div>
 			</div>
 		</div>
 		<div class="col-6 col-sm-6 col-md-6 col-lg-3 col-xl-3">
@@ -71,10 +70,10 @@
 <script>
     $(document).ready(function(){
     	loadCatTable();
+    	loadDocTypes();
         $('#btnResetCategory').click(function(e) {
 			e.preventDefault();
 			resetForm();
-			//loadCatList();
 		});
 		
 		$('#btnInsertCategory').click(function(e){
@@ -89,6 +88,19 @@
 					$(this).removeClass('border border-danger');
 				});
             }else{
+            	//controllo se il valore del campo di testo è presente nei valori del select
+            	var values = getOptions();
+            	var dt = '';
+            	if ($('#customDocTypeCat').val() != ''){
+            		var index = $.inArray($('#customDocTypeCat').val(),values);
+            		if (index > 0){
+            			dt = values[index];
+            		}else{
+            			dt = $('#customDocTypeCat').val();
+            		}
+            	}else{
+            		dt = $('#docTypeCat').val();
+            	}
                 $.ajax({
                     type: "GET",
                     cache: false,
@@ -96,7 +108,7 @@
                     data: {
                         name: $('#nameCat').val(),
                         discount: $('#discountCat').val(),
-                        docType: $('#docTypeCat').val(),
+                        docType: dt,
                         action: 'addCategory'
                     },
                     success: function(data){
@@ -115,6 +127,7 @@
 							});
                         }
                         loadCatTable();
+                        loadDocTypes();
                     },
                     error: function(e){
                     	console.log(e);
@@ -122,8 +135,6 @@
                 });
             }
         });
-        
-       	
     });
 		
 	function resetForm() {
@@ -133,14 +144,31 @@
 		removeRed();
 	}
 	
+	//si può sistemare o no? comunque con la soluzione drastica funziona perfettamente
 	function isFormFilled() {
 		var itIs = true;
-		$('#insertCategory input, #insertCategory select').each(function() {
-			if(!$(this).val() && $(this).attr('id') != 'returnableAcc'){
+		/*$('#insertCategory input, #insertCategory select').each(function() {
+			if(!$(this).val()){
 				$(this).addClass('border border-danger');
 				itIs = false;
 			}
 		});
+		
+			soluzione drastica
+		*/
+			if (!$('#nameCat').val()){
+				$('#nameCat').addClass('border border-danger');
+				itIs = false;
+			}
+			if (!$('#discountCat').val()){
+				$('#discountCat').addClass('border border-danger');
+				itIs = false;
+			}
+			if (!($('#docTypeCat').val() || $('#customDocTypeCat').val())){
+				$('#docTypeCat').addClass('border border-danger');
+				$('#customDocTypeCat').addClass('border border-danger');
+				itIs = false;
+			}
 		return itIs;
 	}
 	
@@ -168,6 +196,31 @@
             	console.log(e);
             }
 		});
+	}
+	
+	function loadDocTypes(){
+		$.ajax({
+			type: 'GET',
+			cache: false,
+			url: "./includes/router.php",
+			data: {
+				action: 'loadDocTypes'
+			},
+			success: function(options){
+				$('#docTypeCat').html(options);
+			},
+			error : function(e) {
+            	console.log(e);
+            }
+		});
+	}
+	
+	function getOptions(){
+		values = [];
+		$("#docTypeCat option").each(function(){
+			values.push($(this).val());
+		});
+		return values;
 	}
 </script>
 <!-- Icons -->

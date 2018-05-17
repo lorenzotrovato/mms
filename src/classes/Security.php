@@ -155,7 +155,7 @@
 		 * @param User $user l'oggetto utente della registrazione
 		 * @return string il messaggio del risultato
 		 */
-		private static function sendVerMail($user){
+		public static function sendVerMail($user){
 			$to = $user->getMail();
 			$subject = "Verifica il tuo account Musetek";
 			$linkver = "https://musetek.tk/src/includes/router.php?action=vermail&mailuser=" . $user->getId() . "&mailkey=" . hash('sha256',$user->getId() . $user->getName() . $user->getMail() . $user->getPass());

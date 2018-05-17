@@ -1,8 +1,9 @@
 <?php
     namespace MMS;
     require_once '../../includes/autoload.php';
-    use MMS\Security;
-    use MMS\Database;
+    use MMS\Security as Security;
+    use MMS\Database as Database;
+    use MMS\Accessory as Accessory;
     Security::init();
     if(!Security::isAdmin()){
         header('Location: signin.php');
@@ -11,7 +12,7 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
 	<h1>Accessori</h1>
 </div>
-<h2><small class="text-muted">Inserisci un accessorio</small></h2>
+<h2><small class="text-muted" id="addEditAcc">Inserisci un accessorio</small></h2>
 <div id="formSuc" class="alert alert-success d-none col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6"></div>
 <div id="formErr" class="alert alert-danger d-none col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6"></div>
 <form id="insertAcc">
@@ -65,6 +66,8 @@
 <hr class="invisible">
 <h2><small class="text-muted">Accessori già inseriti</small></h2>
 <div class="row">
+	<div id="delSuc" class="alert alert-success d-none col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6"></div>
+	<div id="delErr" class="alert alert-danger d-none col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6"></div>
 	<table id="accTable" class="table d-none">
 		<thead class="thead-dark">
 			<th>#</th>
@@ -163,6 +166,37 @@
 		        });
 			}
 		});
+		
+		$('#deleteAccModalBtn').click(function(){
+			$.ajax({
+				type: 'GET',
+				cache: false,
+				url: './includes/router.php',
+				data: {
+					action: 'deleteAcc',
+					id: $('#deleteAccModalBtn').data('id')
+				},
+				success : function(data) {
+					if(data == 'success') {
+						$('#delSuc').html('Accessorio eliminato con <strong>successo</strong>.<a class="float-right close closeDelSuc"><span aria-hidden="true">&times;</span></a>');
+						$('#delSuc').removeClass('d-none');
+						$('.closeDelSuc').click(function() {
+							$(this).parent().addClass('d-none');
+						});
+					}else{
+						$('#delErr').html('<strong>Errore</strong>, i dati immessi non sono validi. <a class="float-right close closeDelErr"><span aria-hidden="true">&times;</span></a>');
+						$('#delErr').removeClass('d-none');
+						$('.closeDelErr').click(function() {
+							$(this).parent().addClass('d-none');
+						});
+	                }
+	                loadTable();
+	            },
+	            error : function(e) {
+	            	console.log('no')
+	            }
+			});
+		});
 	});
 	
 	function resetForm() {
@@ -211,7 +245,12 @@
 	}
 	
 	function loadDeleteAccModal(id) {
-		$('#deleteAccModalBody').html('Sei sicuro di voler eliminare l\'esposizione "' + $('#' + id + 'expotitle').text() + '"?<br>Verranno eliminati dati e foto riguardanti l\'esposizione');
+		$('#deleteAccModalBtn').data('id',id);
+		$('#deleteAccModalBody').html('Sei sicuro di voler eliminare l\'accessorio "' + $('#' + id + 'acctitle').text() + '"?');
 		$('#modalDeleteAcc').modal('show');
+	}
+	
+	function loadEditAccForm(id){
+		
 	}
 </script>

@@ -38,6 +38,7 @@ body {
 	display: -ms-flexbox;
 	display: flex;
 	color: black;
+	overflow-y: auto;
 }
 
 .cover-heading {
@@ -46,7 +47,7 @@ body {
 
 main {
 	color: white;
-	padding-top: 4.3rem;
+	padding-top: calc(4.3rem + 20px);
 }
 
 
@@ -239,6 +240,14 @@ table.table-timeslot tr:nth-child(1) td, table.table-timeslot tr:nth-child(1) th
 
 td a{
 	color: black;
+}
+
+.bootstrap-datetimepicker-widget table td.day:not(.disabled){
+	font-weight: bold;
+}
+
+.slotTile{
+	cursor: pointer;
 }
 
 @media screen and (max-width: 768px) {

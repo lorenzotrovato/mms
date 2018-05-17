@@ -78,6 +78,21 @@
  	 			return print_r(self::$mysqli->error());
  	 		}
  	 	}
+ 	 	
+ 	 	/** elimina l'esposizione
+ 	 	 * se sono collegate fasce orarie, l'esposizione verrà impostata con 0 posti disponibili e con prezzo -1
+ 	 	 * così da mantenere le relazioni con i bliglietti già acquistati, altrimenti viene eliminata dal database
+ 	 	 * @return boolean true se va a buon fine
+ 	 	 */
+ 	 	public function deleteExpo(){
+ 	 		if($this->hasTimeSlots()){
+ 	 			$this->price = -1;
+ 	 			$this->maxSeats = 0;
+ 	 			return $this->merge() > 0;
+ 	 		}else{
+ 	 			return self::$mysqli->queryDML('DELETE FROM evento WHERE id="'.$this->id.'"')==1;
+ 	 		}
+ 	 	}
 
 		/**
 		 * @return integer l'identificativo numerico
@@ -200,6 +215,20 @@
 			return self::$mysqli->queryDML($sql);
 		}
 		
+		/** verifica se ci sono fasce orarie collegate
+		 * @return boolean true se ci sono fascie orarie, false altrimenti
+		 */
+		public function hasTimeSlots(){
+			$ret = false;
+			$ver = $this->getTimeSlots();
+			for($i=1;$i<=count($ver);$i++){
+				if(count($ver[$i])>0){
+					$ret = true;
+				}
+			}
+			return $ret;
+		}
+		
 		public static function getVisit(){
 			$sql = "SELECT * FROM evento WHERE id == 0";
 			$row = self::$mysqli->querySelect($sql)[0];
@@ -211,9 +240,32 @@
 			$rows = self::$mysqli->querySelect($sql);
 			$result = array();
 			foreach($rows as $event){
-				$result []= new Expo($event['id']);
+				if($event['price']!=-1 && $event['maxSeats']>0){
+					$result []= new Expo($event['id']);	
+				}
 			}
 			return $result;
+		}
+		
+		public static function getDayOfWeekFromDate($date){
+			$day = date('w', strtotime($date));
+			return ($day == 0 ? "7" : $day);
+		}
+		
+		public function getOccupiedSeats(){
+			$from = $this->startDate;
+			$array = array();
+			while($from <= $this->endDate){
+				$day = self::getDayOfWeekFromDate($from);
+				if(count($this->timeSlots[$day]) > 0){
+					$array[$from]['dayOfWeek'] = $day;
+					for($i = 0; $i<count($this->timeSlots[$day]); $i++){
+						$array[$from][] = $this->timeSlots[$day][$i]->getOccupiedSeats($from);
+					}
+				}
+				$from = date('Y-m-d', strtotime($from.' +1 day'));
+			}
+			return $array;
 		}
 	}
 ?>

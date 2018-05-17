@@ -16,7 +16,7 @@
 		 * Costruttore completo. Se viene inserito solamente l'id crea l'oggetto scaricando le informazioni dal database.
 		 * @param integer $id        id del record interno alla relazione fasciaoraria
 		 * @param integer $codEvent  (optional) codice dell'evento di riferimento
-		 * @param integer $startHour (optional) ora di inizio della fascia oraria
+		 * @param string  $startHour (optional) ora di inizio della fascia oraria
 		 * @param integer $minutes   (optional) durata della fascia oraria in minuti
 		 * @param integer $day       (optional) giorno della settimana (0 < $day < 7) a cui la fascia oraria fa riferimento
 		 */
@@ -31,13 +31,17 @@
 				$this->day = $day;
 			}else{
 				$sql = "SELECT * FROM fasciaoraria WHERE id=$id";
-				$row = self::$mysqli->querySelect($sql)[0];
-				
-				$this->id = $row['id'];
-				$this->codEvent = $row['codEvent'];
-				$this->startHour = $row['startHour'];
-				$this->minutes = $row['minutes'];
-				$this->day = $row['day'];
+				$row = self::$mysqli->querySelect($sql);
+				if(count($row) > 0){
+					$this->id = $row[0]['id'];
+					//var_dump($row);
+					$this->codEvent = $row[0]['codEvent'];
+					$this->startHour = $row[0]['startHour'];
+					$this->minutes = $row[0]['minutes'];
+					$this->day = $row[0]['day'];
+				}else{
+					throw new \Exception("ID timeslot non esistente");
+				}
 			}
 		}
 		
@@ -52,7 +56,7 @@
 		 */
 		public static function getSlots($codEvent){
 			$slots = array(1 => array(), 2 => array(), 3 => array(), 4 => array(), 5 => array(), 6 => array(), 7 => array());
-			$sql = "SELECT id, codEvent, startHour, minutes, day FROM fasciaoraria WHERE codEvent = $codEvent ORDER BY day, startHour, minutes";
+			$sql = "SELECT id, codEvent, startHour, minutes, day FROM fasciaoraria WHERE codEvent = $codEvent AND minutes > 0 ORDER BY day, startHour, minutes";
 			$rows = self::$mysqli->querySelect($sql);
 			/*var_dump($sql);
 			var_dump($rows);
@@ -82,6 +86,14 @@
  	 			return print_r(self::$mysqli->error());
  	 		}
 		}
+		
+		/** rimuove una fascia oraria
+		 * ATTENZIONE!! ELIMINARE SOLO SE NON CI SONO BIGLIETTI COLLEGATI (usare hasTickets())
+		 * @return boolean true se va a buon fine
+		 */
+	 	public function deleteSlot(){
+	 		return self::$mysqli->queryDML('DELETE FROM fasciaoraria WHERE id="'.$this->id.'"') == 1;
+	 	}
 
 		/**
 		 * @return integer l'identificativo numerico
@@ -125,14 +137,31 @@
 			return $this->day;
 		}
 		
-		public function getOccupiedSeats(){
-			$sql = "SELECT count(*) as num FROM biglietto WHERE codTimeSlot = ".$this->getId();
+		/**
+		 * @param string Data in cui controllare il numero di posti occupati
+		 * @return integer il numero di posti occupati
+		 */
+		public function getOccupiedSeats($date){
+			$date=Security::escape($date);
+			$sql = "SELECT count(*) as num FROM biglietto WHERE codTimeSlot = ".$this->id." AND dateValidity = '$date'";
 			$rows = self::$mysqli->querySelect($sql);
 			return $rows[0]['num'];
 		}
 		
+		/**
+		 * @return boolean true se sono collegati biglietti alla fascia oraria
+		 */
+		public function hasTickets(){
+			$queryBiglietti = 'SELECT count(*) as nbiglietti FROM biglietto WHERE codTimeSlot = "'.$this->id.'"';
+			return self::$mysqli->querySelect($queryBiglietti)[0]['nbiglietti']>0;
+		}
+		
+		public function getDays(){
+			
+		}
+		
 		public function getArray(){
-			return array('startHour' => $this->getStartHour(), 'endHour' => $this->getEndHour());	
+			return array('id' => $this->id, 'startHour' => $this->getStartHour(), 'endHour' => $this->getEndHour());	
 		}
 		
 		/**
@@ -145,7 +174,7 @@
 
 		/**
 		 * Modifica la variabile privata $startHour
-		 * @param integer $startHour l'ora d'inizio
+		 * @param string $startHour l'ora d'inizio
 		 */
 		public function setStartHour($startHour){
 			$this->startHour = $startHour;
@@ -172,8 +201,9 @@
 		 * @return mixed se l'operazione è andata a buon fine ritorna il numero di righe affette (integer) altrimenti ritorna l'errore (string)
 		 */
 		public function merge(){
-			$sql = "UPDATE fasciaoraria SET codEvent=$this->codEvent, startHour=$this->startHour, minutes=$this->minutes, day=$this->day WHERE id=$this->id";
+			$sql = "UPDATE fasciaoraria SET codEvent=$this->codEvent, startHour='$this->startHour', minutes=$this->minutes, day=$this->day WHERE id=$this->id";
 			return self::$mysqli->queryDML($sql);
+			//return $sql;
 		}
 	}
 ?>

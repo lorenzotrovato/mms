@@ -1,10 +1,6 @@
 <?php
     namespace MMS;
-	require 'Database.php';
-	require 'Category.php';
-	require 'Accessory.php';
-	require 'User.php';
-	require 'TimeSlot.php';
+	require_once $_SERVER["DOCUMENT_ROOT"].'/src/includes/autoload.php';
 	use MMS\Database as DB;
 	use MMS\Category;
 	use MMS\Accessory;
@@ -12,7 +8,7 @@
 	use MMS\TimeSlot;
 	
 	class Ticket{
-		private $mysqli;
+		private static $mysqli;
 
 		private $id;
 		private $codUser;
@@ -21,6 +17,7 @@
 		private $datePurchase;
 		private $dateValidity;
 		private $totalPrice;
+		private $validation;
 		private $accessories;
 		
 		
@@ -29,9 +26,8 @@
 		 * @param $id id del biglietto
 		 */
 		public function __construct($id){
-			$this->mysqli = DB::init();
-			$biglietto = $this->mysqli->querySelect('select * from biglietto where id='.$id);
-			if (count($biglietto) == 1){
+			$biglietto = self::$mysqli->querySelect('select * from biglietto where id='.$id);
+			if(count($biglietto) == 1){
 				$this->id = $biglietto[0]['id'];
 				$this->codUser = new User($biglietto[0]['codUser']);
 				$this->codCat = new Category($biglietto[0]['codCat']);
@@ -39,14 +35,20 @@
 				$this->datePurchase = $biglietto[0]['datePurchase'];
 				$this->dateValidity = $biglietto[0]['dateValidity'];
 				$this->totalPrice = $biglietto[0]['totalPrice'];
+				$this->validation = $biglietto[0]['validation'];
+				
 				$this->accessories = array();
-				$idAcc = $this->mysqli->querySelect("select codAccessory from bigliettoAccessorio where codTicket='".$this->id."'");
+				$idAcc = self::$mysqli->querySelect("select codAccessory from bigliettoAccessorio where codTicket='".$this->id."'");
 				foreach($idAcc as $acc){
 					$this->accessories[] = new Accessory($acc['id']);
 				}
 			}else{
 				throw new Exception('Id non valido');
 			}
+		}
+		
+		public static function init(){
+			self::$mysqli = DB::init();
 		}
 
 		/** funzione getId
@@ -111,6 +113,15 @@
 		 */
 		public function getAccessories(){
 			return $this->acessories;
+		}
+		
+		/**
+		 * funzione getEvent
+		 * @return Expo l'oggetto esposizione collegato al biglietto
+		 */
+		public function getEvent(){
+			//var_dump($this->getTimeSlot());
+			return new Expo($this->getTimeSlot()->getCodEvent());
 		}
 	}//class
 ?>

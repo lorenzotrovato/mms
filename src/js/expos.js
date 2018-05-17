@@ -1,4 +1,5 @@
-var timeslots = {};
+var timeslots = [];
+var original_ts = [];
 var selectedEvent = null;
 var editing = false;
 var range = document.getElementById('rangetimeslots');
@@ -50,7 +51,8 @@ function loadTableExpoAndTimeSlot(){
 		cache: false,
 		url: "./includes/router.php?action=loadTimeSlots",
 		success: function(response) {
-			timeslots = JSON.parse(response);
+			timeslots = original_ts = JSON.parse(response);
+			console.log(timeslots);
 		},
 		error: function() {
 
@@ -60,8 +62,8 @@ function loadTableExpoAndTimeSlot(){
 
 function resetFormExpo(){
 	document.getElementById('insertExpo').reset();
-	timeslots = [];
 	selectedEvent = null;
+	timeslots = original_ts;
 	$('#timeslotsdayselect').val(0);
 	range.noUiSlider.destroy();
 	rnSettings.start=[0];
@@ -83,6 +85,9 @@ function resetFormExpo(){
 	$('#formErrExpo').addClass('d-none');
 	$('#formErrExpo').removeClass('alert-danger');
 	$('#formErrExpo').removeClass('alert-success');
+	$('#expoImage').attr('src','');
+	$('#expoImage').addClass('d-none');
+	$('#expoImagePrev').removeClass('d-none');
 	return false;
 }
 
@@ -108,34 +113,42 @@ $('#btnInsertExpo').on('click', function() {
 		'dateEndExpo': dataEnd,
 		'priceExpo': priceExpo,
 		'maxSeatsExpo': postiMaxExpo,
-		'timeslots': timeslots['event'+selectedEvent]
+		'timeslots': timeslots[selectedEvent]
 	};
-	if(editing){
+	if(editing===true){
 		formExpo.action = 'editExpo';
-		formExpo.timeslots = timeslots['event'+selectedEvent];
+		formExpo.timeslots = timeslots[selectedEvent];
 		formExpo.idExpo = selectedEvent;
 	}
 	console.log(formExpo);
-	console.log(timeslots['event'+selectedEvent]);
+	console.log(timeslots[selectedEvent]);
+	
 	$.ajax({
 		type: "GET",
 		cache: false,
 		url: "./includes/router.php",
 		data: formExpo,
 		success: function(response) {
-			if(response == 'success-edit'){
+			if(response == 's-edit'){
 				resetFormExpo();
 				loadTableExpoAndTimeSlot();
 				$('#formErrExpo').html("Esposizione modificata con <strong>successo</strong>");
 				$('#formErrExpo').addClass('alert-success');
 				$('#formErrExpo').removeClass('d-none');
 				editing=false;
-			}else if (response == 'success') {
+				
+			}else if (response.includes('success')) {
 				$('#formErrExpo').html("Esposizione inserita con <strong>successo</strong>");
 				$('#formErrExpo').addClass('alert-success');
 				$('#formErrExpo').removeClass('d-none');
-				resetFormExpo();
-				loadTableExpoAndTimeSlot();
+				if($('#fileImageExpo').prop('files').length==1){
+					$('#formErrExpo').html("Esposizione inserita con <strong>successo</strong>. Caricamento immagine di copertina");
+					uploadImage($('#fileImageExpo').prop('files')[0],parseInt(response.replace('success','')),function(){
+						resetFormExpo();
+						loadTableExpoAndTimeSlot();
+					});
+				}
+				
 			} else {
 				$('#formErrExpo').html("<strong>Avviso:</strong> " + response);
 				$('#formErrExpo').addClass('alert-danger');
@@ -157,6 +170,8 @@ function loadDeleteExpoModal(id, inuse) {
 	if (!inuse) {
 		$('#deleteExpoModalBody').html('Sei sicuro di voler eliminare l\'esposizione "' + $('#' + id + 'expotitle').text() + '"?<br>Verranno eliminati dati e foto riguardanti l\'esposizione');
 		$('#modalDeleteExpo').modal('show');
+		$('#deleteExpoModalBtn').attr('data-expoid',id);
+		$('#deleteExpoModalBtn').removeAttr('disabled');
 	} else {
 		$('#deleteExpoModalBtn').attr('disabled', 'disabled');
 		$('#deleteExpoModalBody').html('Impossibile eliminare l\'esposizione "' + $('#' + id + 'expotitle').text() + '".<br>L\'esposizione è in corso');
@@ -166,12 +181,55 @@ function loadDeleteExpoModal(id, inuse) {
 }
 
 
+$('#deleteExpoModalBtn').on('click',function(event){
+	var expoid = event.target.getAttribute('data-expoid');
+	$('#deleteExpoModalBtn').attr('disabled','disabled');
+	$('#deleteExpoModalBtn').text('Eliminazione...');
+	$.ajax({
+		type: "GET",
+		cache: false,
+		url: "./includes/router.php",
+		data: {'action': 'deleteExpo','expoid':expoid},
+		success: function(response){
+			console.log(response);
+			$('#modalDeleteExpo').modal('hide');
+			$('#deleteExpoModalBtn').removeAttr('disabled');
+			$('#deleteExpoModalBtn').text('Elimina');
+			$('#deleteExpoErr').removeClass('d-none');
+			if(response=="delete-success"){
+				$('#deleteExpoErr').addClass('alert-success');
+				$('#deleteExpoErr').html("<strong>Avviso:</strong> esposizione eliminata correttamente");
+				loadTableExpoAndTimeSlot();
+			}else{
+				$('#deleteExpoErr').addClass('alert-danger');
+				$('#deleteExpoErr').html("<strong>Avviso:</strong> " + response);	
+			}
+			window.setTimeout(resetDeleteErrExpo, 5000);
+		},
+		error: function(){
+			$('#modalDeleteExpo').modal('hide');
+			$('#deleteExpoModalBtn').removeAttr('disabled');
+			$('#deleteExpoModalBtn').text('Elimina');
+			$('#deleteExpoErr').removeClass('d-none');
+			$('#deleteExpoErr').html("<strong>Avviso:</strong> impossibile stabilire una connessione con il server.");	
+			window.setTimeout(resetDeleteErrExpo, 5000);
+		}
+	});
+});
+
+function resetDeleteErrExpo(){
+	$('#deleteExpoErr').addClass('d-none');
+	$('#deleteExpoErr').removeClass('alert-success');
+	$('#deleteExpoErr').removeClass('alert-danger');
+	$('#deleteExpoErr').html('');
+}
+
 feather.replace();
 
 //gestione slider fascie orarie
 
 $('#rangetimeslotsadd').on('click', function() {
-	var day = timeslots["event" + selectedEvent]["day" + $('#timeslotsdayselect').val()];
+	var day = timeslots[selectedEvent][$('#timeslotsdayselect').val()];
 	if(totalMinutesUsedForDay(day)<=1309 && (hourToMinutes(day[day.length-1].startHour)+parseInt(day[day.length-1].minutes)<1338)){
 		if(day.length>0){
 			day.push({
@@ -193,20 +251,28 @@ $('#rangetimeslotsadd').on('click', function() {
 });
 
 function updateTimeSlots(values, handle) {
-	var day = timeslots["event" + selectedEvent]["day" + $('#timeslotsdayselect').val()];
+	var day = timeslots[selectedEvent][$('#timeslotsdayselect').val()];
 	var label = "Orari di Apertura<br>";
 	if (day != null) {
 		var newvalues = [];
 		for (var i = 0; i < values.length; i += 2) {
 			newvalues.push([values[i], values[i + 1]]);
 		}
-		for (var i = 0; i < day.length; i++) {
-			if (newvalues[i][0] == newvalues[i][1] && day.length == 1) {
+		for (var i = 0; i < newvalues.length; i++) {
+			//console.log(dayEmpty(values));
+			if (dayEmpty(values)) {
 				label = "Orari di Apertura<br>&nbsp;&nbsp;Chiuso";
 			} else if (newvalues[i][0] == newvalues[i][1]) {
-				day[i] = null;
-				day.splice(i, 1);
-				timeslots["event" + selectedEvent]["day" + $('#timeslotsdayselect').val()] = day;
+				if(editing){
+					day[i].minutes = 0;
+				}else{
+					day[i] = null;
+					day.splice(i, 1);
+					console.log(day[i]);
+					/*newvalues.splice(i, 1);
+					i--;*/
+				}
+				timeslots[selectedEvent][$('#timeslotsdayselect').val()] = day;
 				parseTimeSlotsForDay(selectedEvent, $('#timeslotsdayselect').val());
 				return;
 			} else {
@@ -215,7 +281,7 @@ function updateTimeSlots(values, handle) {
 				label += "&nbsp;&nbsp;-dalle " + day[i].startHour + " alle " + getTimeFormat(hourToMinutes(day[i].startHour) + parseInt(day[i].minutes)) + "<br>";
 			}
 		}
-		if(day.length != 1 || newvalues[0][0] != newvalues[0][1])
+		if(!dayEmpty(values))
 			label += "per un totale di " + totalMinutesUsedForDay(day) + " minuti";
 	} else {
 		if (values[0] != 0 || values[1] != 0) {
@@ -227,9 +293,11 @@ function updateTimeSlots(values, handle) {
 			});
 		}
 	}
-	timeslots["event" + selectedEvent]["day" + $('#timeslotsdayselect').val()] = day;
+	timeslots[selectedEvent][$('#timeslotsdayselect').val()] = day;
 	$('#rangetimeslotslabel').html(label);
-	tsApplyToAll();
+	if($('#tsCopyAllCont').children('input')[0].checked){
+		tsApplyToAll();	
+	}
 }
 
 function totalMinutesUsedForDay(day){
@@ -264,34 +332,58 @@ function colorRangeTS() {
 	basens[0].classList.add('timeslotClosed');
 }
 
+function dayEmpty(values){
+	var day = timeslots[selectedEvent][$('#timeslotsdayselect').val()];
+	var diversi = false;
+	for (var i = 0; i < values.length; i += 2) {
+		if(values[i]!=values[i+1])
+			diversi = true;
+	}
+	return (!editing && day.length==1 && !diversi) || (editing && !diversi);
+}
+
 function parseTimeSlotsForDay(eventid, day) {
 	var tss;
 	if(eventid!=null){
-		tss = timeslots["event" + eventid]["day" + day];	
+		if(timeslots[eventid]==null){
+			timeslots[eventid] = {};
+			timeslots[eventid][day] = null;
+			tss = timeslots[eventid][day];
+		}else{
+			tss = timeslots[eventid][day];	
+		}
 	}else{
-		timeslots["eventnew"] = {};
-		timeslots["eventnew"]["day" + day] = null;
+		timeslots["new"] = {};
+		timeslots["new"][day] = null;
 		selectedEvent = "new";
-		tss = timeslots["eventnew"]["day" + day];
+		tss = timeslots["new"][day];
 	}
 
 	var label = "Orari di Apertura<br>";
 	if (tss != null) {
-		rnSettings.start = [];
-		rnSettings.connect = [false];
-		for (var i = 0; i < tss.length; i++) {
-			rnSettings.start.push(hourToMinutes(tss[i].startHour));
-			rnSettings.start.push(hourToMinutes(tss[i].startHour) + parseInt(tss[i].minutes));
-			console.table(rnSettings);
-			if (tss.length == 1) {
-				rnSettings.connect = true;
-			} else {
-				rnSettings.connect.push(true);
-				rnSettings.connect.push(false);
+		if(tss.length>0){
+			rnSettings.start = [];
+			rnSettings.connect = [false];
+			for (var i = 0; i < tss.length; i++) {
+				if(parseInt(tss[i].minutes)>0){
+					rnSettings.start.push(hourToMinutes(tss[i].startHour));
+					rnSettings.start.push(hourToMinutes(tss[i].startHour) + parseInt(tss[i].minutes));
+					if (tss.length == 1) {
+						rnSettings.connect = true;
+					} else {
+						rnSettings.connect.push(true);
+						rnSettings.connect.push(false);
+					}
+					label += "&nbsp;&nbsp;-dalle " + tss[i].startHour + " alle " + getTimeFormat(hourToMinutes(tss[i].startHour) + parseInt(tss[i].minutes)) + "<br>";
+				}
 			}
-			label += "&nbsp;&nbsp;-dalle " + tss[i].startHour + " alle " + getTimeFormat(hourToMinutes(tss[i].startHour) + parseInt(tss[i].minutes)) + "<br>";
+			label += "per un totale di " + totalMinutesUsedForDay(tss) + " minuti";
+		}else{
+			rnSettings.start = [0, 0];
+			rnSettings.connect = true;
+			label = "Orari di Apertura<br>&nbsp&nbsp;Chiuso";
+			tss.push({id: null,startHour: "00:00",minutes:0});
 		}
-		label += "per un totale di " + totalMinutesUsedForDay(tss) + " minuti";
 	} else {
 		rnSettings.start = [0, 0];
 		rnSettings.connect = true;
@@ -326,13 +418,26 @@ $('#timeslotsdayselect').on('change', function() {
 $('#tsCopyAllCont').on('change',tsApplyToAll);
 
 function tsApplyToAll(){
-	var currentConf = timeslots["event" + selectedEvent]["day" + $('#timeslotsdayselect').val()];
-	if($('#tsCopyAllCont').children('input')[0].checked){
-		for(var i=1;i<=7;i++){
-			timeslots["event" + selectedEvent]["day" + i] = currentConf;
+	var currentConf = timeslots[selectedEvent][$('#timeslotsdayselect').val()];
+	for(var i=1;i<=7;i++){
+		if(i!=$('#timeslotsdayselect').val()){
+			timeslots[selectedEvent][i] = [];
+			//inizializzazione giorno
+			for(var x=0;x<currentConf.length;x++){
+				timeslots[selectedEvent][i].push({
+					'id': null,
+					'startHour': '00:00',
+					'minutes': 0
+				});
+			}
+			for(var x=0;x<timeslots[selectedEvent][i].length;x++){
+				timeslots[selectedEvent][i][x].startHour = currentConf[x].startHour;
+				timeslots[selectedEvent][i][x].minutes = currentConf[x].minutes;
+			}
 		}
-		parseTimeSlotsForDay(selectedEvent, $('#timeslotsdayselect').val());
+		
 	}
+	parseTimeSlotsForDay(selectedEvent, $('#timeslotsdayselect').val());
 }
 
 
@@ -363,5 +468,68 @@ function loadEditExpoForm(event){
 	$('#priceExpo').val($('#'+expoid+'expoprice').text());
 	$('#maxSeatsExpo').val($('#'+expoid+'expomseats').text());
 	//caricamento timeslots
+	timeslots = original_ts;
 	selectedEvent = expoid;
+	//caricamento immagine
+	var pathimg = $('#'+expoid+"expocontainer").attr('data-coverimage');
+	if(pathimg!=""){
+		$('#expoImage').attr('src','images/covers/'+pathimg);
+		$('#expoImage').css('width','100px');
+		$('#expoImage').css('height','auto');
+		$('#expoImage').removeClass('d-none');
+		$('#expoImagePrev').addClass('d-none');
+	}else{
+		$('#expoImage').addClass('d-none');
+		$('#expoImagePrev').removeClass('d-none');
+	}
+	
+}
+
+
+//gestione immagine esposizione
+$("input[type=file]").change(function () {
+	var fieldVal = $(this).val();
+	// Change the node's value by removing the fake path (Chrome)
+	fieldVal = fieldVal.replace("C:\\fakepath\\", "");
+	if (fieldVal != undefined || fieldVal != "") {
+		$(this).next(".custom-file-label").text(fieldVal);
+	}
+});
+
+function uploadImage(file,expoid,callback){
+	if(file.type!="image/jpeg" && file.type!="image/png"){
+		$('#expoImageLoadLabel').text('Caricamento immagine: File non supportato');
+		console.log(file.type);
+		return;
+	}
+	var ajax = new XMLHttpRequest();
+	ajax.addEventListener('load', function(data){
+		$('#expoImageLoadLabel').text('Completato');
+		console.log(data.target.responseText);
+		var msg = JSON.parse(data.target.responseText);
+		if(msg.result=="ok"){
+			$('#expoImage').attr('src',msg.imagepath);
+			$('#expoImage').css('width','100px');
+			$('#expoImage').css('height','50px');
+			$('#expoImage').removeClass('d-none');
+			$('#expoImagePrev').addClass('d-none');
+			callback();
+		}else{
+			$('#expoImageLoadLabel').text('Errore: ' + msg.result);
+		}
+	});
+	
+	ajax.upload.addEventListener('progress', function(evt){
+		if (evt.lengthComputable) {
+            var percentComplete = (evt.loaded / evt.total)*100;
+            $('#expoImageLoadProg').css('width',percentComplete.toFixed(2) + "%");
+            $('#expoImageLoadLabel').text('Caricamento immagine: ' + percentComplete.toFixed(2) + "%");
+        }
+	});
+	
+	var data = new FormData();
+	data.append('expoid',expoid);
+	data.append('image', file);
+	ajax.open('POST', './includes/uploadImageExpo.php');
+	ajax.send(data);
 }
