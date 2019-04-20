@@ -2,16 +2,10 @@
 	- *front-end* PRIORITARIO:
 		-pagina visita generale (tutto)
 		-pagina acquisto e sistema di acquisto con paypal (tutto)
-		-gestione di foto/testi nelle descrizioni delle esposizioni
 		
 	- *dashboard*:
-		-Accessori: modifica (tutto)
-		-Categorie: modifica ed eliminazione (tutto)
-		-Categorie: aggiunta di documenti personalizzati nel menu a tendina
+
 		-Dashboard: (opzionale) gestione dei giorni di chiusura eccezionali e della bacheca
-		-versione mobile con sidebar
 		
 	- *AGGIUNTA*
 		-validazione del biglietto tramite codice QR
-
-per eliminare le categorie settiamo priority a -1? sempre per lo stesso discorso degli accessori
