@@ -1,7 +1,7 @@
 var timeslots = [];
 var original_ts = [];
 var selectedEvent = null;
-var editing = false;
+var editing = true;
 var range = document.getElementById('rangetimeslots');
 var rnSettings = {
 	start: [0],
@@ -26,32 +26,10 @@ function loadTableExpoAndTimeSlot(){
 	$.ajax({
 		type: "GET",
 		cache: false,
-		url: "./includes/router.php?action=loadTableExpos",
-		success: function(response) {
-			if (response != "") {
-				$('#tableExpoList').html(response);
-				feather.replace();
-				$('.tdExpoDesc').on("mouseover", function() {
-					$(this).find("span").popover('show');
-				});
-				$('.tdExpoDesc').on("mouseleave", function() {
-					$(this).find("span").popover('hide');
-				});
-				$('.editExpoBtn').on('click',loadEditExpoForm);
-			}
-		},
-		error: function() {
-			$('#tableExpoList').html('<tr><td>0</td><td><strong>Errore del server</strong></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>');
-		}
-	});
-
-	//caricamento fascie orarie
-	$.ajax({
-		type: "GET",
-		cache: false,
 		url: "./includes/router.php?action=loadTimeSlots",
 		success: function(response) {
 			timeslots = original_ts = JSON.parse(response);
+			selectedEvent = 0;
 			console.log(timeslots);
 		},
 		error: function() {
@@ -105,7 +83,7 @@ $('#btnInsertExpo').on('click', function() {
 	var priceExpo = $('#priceExpo').val();
 	var postiMaxExpo = $('#maxSeatsExpo').val();
 	var formExpo = {
-		'action': 'addExpo',
+		'action': 'editVisit',
 		'idExpo': selectedEvent,
 		'nomeExpo': nomeExpo,
 		'descExpo': descExpo,
@@ -115,46 +93,24 @@ $('#btnInsertExpo').on('click', function() {
 		'maxSeatsExpo': postiMaxExpo,
 		'timeslots': timeslots[selectedEvent]
 	};
-	if(editing===true){
-		formExpo.action = 'editExpo';
-		formExpo.timeslots = timeslots[selectedEvent];
-		formExpo.idExpo = selectedEvent;
-	}
+
 	console.log(formExpo);
+	console.log('dfk');
 	console.log(timeslots[selectedEvent]);
-	
 	$.ajax({
 		type: "GET",
 		cache: false,
 		url: "./includes/router.php",
 		data: formExpo,
 		success: function(response) {
-			if(response.includes('s-edit')){
-				if($('#fileImageExpo').prop('files').length==1){
-					uploadImage($('#fileImageExpo').prop('files')[0],parseInt(response.replace('s-edit','')),function(){
-						
-					});
-				}else{
-					resetFormExpo();
-					loadTableExpoAndTimeSlot();
-				}
-				$('#formErrExpo').html("Esposizione modificata con <strong>successo</strong>.");
+			if(response == 's-edit'){
+				resetFormExpo();
+				loadTableExpoAndTimeSlot();
+				$('#formErrExpo').html("Visita modificata con <strong>successo</strong>");
 				$('#formErrExpo').addClass('alert-success');
 				$('#formErrExpo').removeClass('d-none');
-				editing=false;
-			}else if (response.includes('success')) {
-				$('#formErrExpo').html("Esposizione inserita con <strong>successo</strong>");
-				$('#formErrExpo').addClass('alert-success');
-				$('#formErrExpo').removeClass('d-none');
-				if($('#fileImageExpo').prop('files').length==1){
-					$('#formErrExpo').html("Esposizione inserita con <strong>successo</strong>. Caricamento immagine di copertina");
-					uploadImage($('#fileImageExpo').prop('files')[0],parseInt(response.replace('success','')),function(){
-						resetFormExpo();
-						loadTableExpoAndTimeSlot();
-					});
-				}
-				
-			} else {
+				editing=true;
+			}else{
 				$('#formErrExpo').html("<strong>Avviso:</strong> " + response);
 				$('#formErrExpo').addClass('alert-danger');
 				$('#formErrExpo').removeClass('d-none');
@@ -171,63 +127,6 @@ $('#btnInsertExpo').on('click', function() {
 	return false;
 });
 
-function loadDeleteExpoModal(id, inuse) {
-	if (!inuse) {
-		$('#deleteExpoModalBody').html('Sei sicuro di voler eliminare l\'esposizione "' + $('#' + id + 'expotitle').text() + '"?<br>Verranno eliminati dati e foto riguardanti l\'esposizione');
-		$('#modalDeleteExpo').modal('show');
-		$('#deleteExpoModalBtn').attr('data-expoid',id);
-		$('#deleteExpoModalBtn').removeAttr('disabled');
-	} else {
-		$('#deleteExpoModalBtn').attr('disabled', 'disabled');
-		$('#deleteExpoModalBody').html('Impossibile eliminare l\'esposizione "' + $('#' + id + 'expotitle').text() + '".<br>L\'esposizione è in corso');
-		$('#modalDeleteExpo').modal('show');
-	}
-
-}
-
-
-$('#deleteExpoModalBtn').on('click',function(event){
-	var expoid = event.target.getAttribute('data-expoid');
-	$('#deleteExpoModalBtn').attr('disabled','disabled');
-	$('#deleteExpoModalBtn').text('Eliminazione...');
-	$.ajax({
-		type: "GET",
-		cache: false,
-		url: "./includes/router.php",
-		data: {'action': 'deleteExpo','expoid':expoid},
-		success: function(response){
-			console.log(response);
-			$('#modalDeleteExpo').modal('hide');
-			$('#deleteExpoModalBtn').removeAttr('disabled');
-			$('#deleteExpoModalBtn').text('Elimina');
-			$('#deleteExpoErr').removeClass('d-none');
-			if(response=="delete-success"){
-				$('#deleteExpoErr').addClass('alert-success');
-				$('#deleteExpoErr').html("<strong>Avviso:</strong> esposizione eliminata correttamente");
-				loadTableExpoAndTimeSlot();
-			}else{
-				$('#deleteExpoErr').addClass('alert-danger');
-				$('#deleteExpoErr').html("<strong>Avviso:</strong> " + response);	
-			}
-			window.setTimeout(resetDeleteErrExpo, 5000);
-		},
-		error: function(){
-			$('#modalDeleteExpo').modal('hide');
-			$('#deleteExpoModalBtn').removeAttr('disabled');
-			$('#deleteExpoModalBtn').text('Elimina');
-			$('#deleteExpoErr').removeClass('d-none');
-			$('#deleteExpoErr').html("<strong>Avviso:</strong> impossibile stabilire una connessione con il server.");	
-			window.setTimeout(resetDeleteErrExpo, 5000);
-		}
-	});
-});
-
-function resetDeleteErrExpo(){
-	$('#deleteExpoErr').addClass('d-none');
-	$('#deleteExpoErr').removeClass('alert-success');
-	$('#deleteExpoErr').removeClass('alert-danger');
-	$('#deleteExpoErr').html('');
-}
 
 feather.replace();
 
@@ -271,6 +170,8 @@ function updateTimeSlots(values, handle) {
 			} else if (newvalues[i][0] == newvalues[i][1]) {
 				if(editing){
 					day[i].minutes = 0;
+					console.log('zero min');
+					console.log(day[i]);
 				}else{
 					day[i] = null;
 					day.splice(i, 1);
@@ -444,99 +345,4 @@ function tsApplyToAll(){
 		
 	}
 	parseTimeSlotsForDay(selectedEvent, $('#timeslotsdayselect').val());
-}
-
-
-//gestione modifica delle esposizioni
-
-function loadEditExpoForm(event){
-	resetFormExpo();
-	editing = true;
-	//reset avvisi
-	$('#formErrExpo').html("");
-	$('#formErrExpo').addClass('d-none');
-	$('#formErrExpo').removeClass('alert-danger');
-	$('#formErrExpo').removeClass('alert-success');
-	var expoid = event.currentTarget.getAttribute('data-expoid');
-	$('#titleCreateEditExpo').html('Modifica un\'esposizione');
-	$('#titleCreateEditExpo').removeClass('text-muted');
-	$('#btnInsertExpo').removeClass('btn-primary');
-	$('#btnInsertExpo').addClass('btn-warning');
-	$('#btnResetExpoForm').html('Annulla');
-	$('#btnInsertExpo').html('Modifica l\'esposizione');
-	$('.expocontainer').removeClass('table-warning');
-	$('#'+expoid+'expocontainer').addClass('table-warning');
-	//riempimento campi
-	$('#nameExpo').val($('#'+expoid+'expotitle').text());
-	$('#descExpo').val($('#'+expoid+'expodesc').attr('data-alldesc'));
-	$('#dateStartExpo').val($('#'+expoid+'exposdate').attr('data-realdate'));
-	$('#dateEndExpo').val($('#'+expoid+'expoedate').attr('data-realdate'));
-	$('#priceExpo').val($('#'+expoid+'expoprice').text());
-	$('#maxSeatsExpo').val($('#'+expoid+'expomseats').text());
-	//caricamento timeslots
-	timeslots = original_ts;
-	selectedEvent = expoid;
-	//caricamento immagine
-	var pathimg = $('#'+expoid+"expocontainer").attr('data-coverimage');
-	if(pathimg!=""){
-		$('#expoImage').attr('src','images/covers/'+pathimg);
-		$('#expoImage').css('width','100px');
-		$('#expoImage').css('height','auto');
-		$('#expoImage').removeClass('d-none');
-		$('#expoImagePrev').addClass('d-none');
-	}else{
-		$('#expoImage').addClass('d-none');
-		$('#expoImagePrev').removeClass('d-none');
-	}
-	
-}
-
-
-//gestione immagine esposizione
-$("input[type=file]").change(function () {
-	var fieldVal = $(this).val();
-	// Change the node's value by removing the fake path (Chrome)
-	fieldVal = fieldVal.replace("C:\\fakepath\\", "");
-	if (fieldVal != undefined || fieldVal != "") {
-		$(this).next(".custom-file-label").text(fieldVal);
-	}
-});
-
-function uploadImage(file,expoid,callback){
-	if(file.type!="image/jpeg" && file.type!="image/png"){
-		$('#expoImageLoadLabel').text('Caricamento immagine: File non supportato');
-		console.log(file.type);
-		return;
-	}
-	var ajax = new XMLHttpRequest();
-	ajax.addEventListener('load', function(data){
-		$('#expoImageLoadLabel').text('Completato');
-		console.log(data.target.responseText);
-		var msg = JSON.parse(data.target.responseText);
-		if(msg.result=="ok"){
-			var random = Math.floor((Math.random() * 10) + 1);
-			$('#expoImage').attr('src',msg.imagepath+'?random='+random);
-			$('#expoImage').css('width','100px');
-			$('#expoImage').css('height','50px');
-			$('#expoImage').removeClass('d-none');
-			$('#expoImagePrev').addClass('d-none');
-			callback();
-		}else{
-			$('#expoImageLoadLabel').text('Errore: ' + msg.result);
-		}
-	});
-	
-	ajax.upload.addEventListener('progress', function(evt){
-		if (evt.lengthComputable) {
-            var percentComplete = (evt.loaded / evt.total)*100;
-            $('#expoImageLoadProg').css('width',percentComplete.toFixed(2) + "%");
-            $('#expoImageLoadLabel').text('Caricamento immagine: ' + percentComplete.toFixed(2) + "%");
-        }
-	});
-	
-	var data = new FormData();
-	data.append('expoid',expoid);
-	data.append('image', file);
-	ajax.open('POST', './includes/uploadImageExpo.php');
-	ajax.send(data);
 }

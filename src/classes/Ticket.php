@@ -2,10 +2,11 @@
     namespace MMS;
 	require_once $_SERVER["DOCUMENT_ROOT"].'/src/includes/autoload.php';
 	use MMS\Database as DB;
-	use MMS\Category;
-	use MMS\Accessory;
-	use MMS\User;
-	use MMS\TimeSlot;
+	use MMS\Category as Category;
+	use MMS\Accessory as Accessory;
+	use MMS\User as User;
+	use MMS\TimeSlot as TimeSlot;
+	use MMS\Security as Security;
 	
 	class Ticket{
 		private static $mysqli;
@@ -26,6 +27,7 @@
 		 * @param $id id del biglietto
 		 */
 		public function __construct($id){
+			self::init();
 			$biglietto = self::$mysqli->querySelect('select * from biglietto where id='.$id);
 			if(count($biglietto) == 1){
 				$this->id = $biglietto[0]['id'];
@@ -40,7 +42,7 @@
 				$this->accessories = array();
 				$idAcc = self::$mysqli->querySelect("select codAccessory from bigliettoAccessorio where codTicket='".$this->id."'");
 				foreach($idAcc as $acc){
-					$this->accessories[] = new Accessory($acc['id']);
+					$this->accessories[] = new Accessory($acc['codAccessory']);
 				}
 			}else{
 				throw new Exception('Id non valido');
@@ -49,6 +51,29 @@
 		
 		public static function init(){
 			self::$mysqli = DB::init();
+		}
+		
+		/**
+		 * aggiunge un biglietto dopo l'acquisto
+		 * @param User $user l'utente che effettua l'acquisto
+		 * @param Category $cat la categoria di biglietto
+		 * @param TimeSlot $ts la fascia oraria corrispondente
+		 * @param date $dv la data di validità del biglietto
+		 * @param float $tp prezzo totale del biglietto
+		 * @param integer $qta Numero biglietti
+		 * @return Ticket l'oggetto ticket creato oppure l'errore
+		 */
+		public static function addTicket($user,$cat,$ts,$dv,$tp){
+			self::init();
+			$datep = Security::escape(date('Y-m-d H:i:s',time()));
+			$datev = Security::escape(date('Y-m-d',strtotime($dv)));
+			$val = Security::escape(md5(($user->getId()).($cat).mt_rand(0,99999999999)));
+			$queryIns = 'INSERT INTO biglietto(codUser, codCat, codTimeSlot, datePurchase, dateValidity, totalPrice, validation) VALUES ("'.$user->getId().'","'.$cat.'","'.$ts.'","'.$datep.'","'.$datev.'","'.floatval($tp).'","'.$val.'")';
+			if(self::$mysqli->queryDML($queryIns)==1){
+				return self::$mysqli->getInsertId();
+			}else{
+				return "error";
+			}
 		}
 
 		/** funzione getId
@@ -112,7 +137,7 @@
 		 * @return $this->accessories
 		 */
 		public function getAccessories(){
-			return $this->acessories;
+			return $this->accessories;
 		}
 		
 		/**
@@ -122,6 +147,36 @@
 		public function getEvent(){
 			//var_dump($this->getTimeSlot());
 			return new Expo($this->getTimeSlot()->getCodEvent());
+		}
+		
+		/**
+		 * @return int la quantità per il singolo accessorio nel bilglietto
+		 */
+		public function getQtaForAcc($accId){
+			Security::init();
+			$ai = intval(Security::escape($accId));
+			$query = self::$mysqli->querySelect('SELECT * FROM bigliettoAccessorio WHERE codTicket="'.$this->id.'" AND codAccessory="'.$ai.'"');
+			if(count($query)==1){
+				return $query[0]['qta'];
+			}else{
+				return false;
+			}
+		}
+		
+		/**
+		 * @return array l'oggetto come array associativo
+		 */
+		public function asAssocArray(){
+			$accArr = array();
+			self::init();
+			Category::init();
+			TimeSlot::init();
+			foreach($this->accessories as $a){
+				$accArr []= array('id'=>$a->getId(),'name'=>$a->getName(),'price'=>$a->getPrice(),'qta'=>$this->getQtaForAcc($a->getId()));
+			}
+			return array('id'=>$this->id,'datePurchase'=>date('d/m/Y',strtotime($this->datePurchase)),'dateValidity'=>date('d/m/Y',strtotime($this->dateValidity)),
+			'categoryId'=>$this->codCat->getId(),'categoryName'=>$this->codCat->getName(),'timeSlot'=>$this->codTimeSlot->getArray(),'accessories'=>$accArr,
+			'valkey'=>$this->validation);
 		}
 	}//class
 ?>

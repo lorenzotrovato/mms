@@ -34,8 +34,25 @@
  		 * @return boolean se l'utente esiste true, altrimenti false
  	 */
 		public static function userExists($data){
+			$data=Security::escape($data);
 			$query_exs= 'SELECT * FROM utente WHERE name="'. self::escape($data) .'" OR mail="'. self::escape($data) .'"';
 			return self::$mysqli->numRows($query_exs)>0;
+		}
+		
+		public static function beginTransaction(){
+			self::$mysqli->getObj()->autocommit(false);
+		}
+		
+		public static function commit(){
+			self::$mysqli->getObj()->commit();
+		}
+		
+		public static function rollback(){
+			self::$mysqli->getObj()->rollback();
+		}
+		
+		public static function endTransaction(){			
+			self::$mysqli->getObj()->autocommit(true);
 		}
 		
 		/**
@@ -67,16 +84,20 @@
 		 * @return string il messaggio del risultato
 		 */
 		public static function login($us,$psw){
-			$us = self::escape($us);
+			$us = Security::escape(self::escape($us));
 			$users = self::$mysqli->querySelect("SELECT * FROM utente WHERE name = '$us' OR mail = '$us'");
+			$msg = "errore generico, riprovare";
 			if(count($users) == 1 && password_verify($psw, $users[0]['pass'])){
 				if($users[0]['role']>0){
-					self::verSession();
-					$_SESSION['user'] = $users[0]['id'];
-					if($users[0]['role']>1){
-						$msg = 'success-admin';
+					if(!self::verSession()){
+						$_SESSION['user'] = $users[0]['id'];
+						if($users[0]['role']>1){
+							$msg = 'success-admin';
+						}else{
+							$msg = 'success';
+						}
 					}else{
-						$msg = 'success';
+						$msg = 'errore sconosciuto';
 					}
 				}else{
 					$msg = 'devi prima verificare l\'indirizzo mail';
@@ -158,7 +179,7 @@
 		public static function sendVerMail($user){
 			$to = $user->getMail();
 			$subject = "Verifica il tuo account Musetek";
-			$linkver = "https://musetek.tk/src/includes/router.php?action=vermail&mailuser=" . $user->getId() . "&mailkey=" . hash('sha256',$user->getId() . $user->getName() . $user->getMail() . $user->getPass());
+			$linkver = "https://www.musetek.ml/src/includes/router.php?action=vermail&mailuser=" . $user->getId() . "&mailkey=" . hash('sha256',$user->getId() . $user->getName() . $user->getMail() . $user->getPass());
 			$message = "
 			<html>
 			<head>
@@ -173,7 +194,9 @@
 			";
 			$headers = "MIME-Version: 1.0" . "\r\n";
 			$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-			$headers .= "From: <noreply@musetek.tk>";
+			$headers .= "From: MuseTek < noreply@musetek.ml >". "\r\n";
+			$headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
+			$headers .= "X-Priority: 1";
 			return mail($to,$subject,$message,$headers);
 		}
 		

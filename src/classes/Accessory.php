@@ -133,13 +133,14 @@
 		 * @return true se la modifica è andata a buon fine, false altrimenti
 		 */
 		public function merge() {
-			$id = $this->id;
-			$name = $this->name;
-			$price = $this->price;
-			$type = $this->type;
-			$nAvailable = $this->nAvailable;
-			$returnable = $this->returnable;
-			return self::$mysqli->queryDML("update accessorio set name='$name', price='$price', type='$type', nAvailable='$nAvailable', returnable='$returnable' where id='$id'") > 0;
+			$id = Security::escape($this->id);
+			$name = Security::escape($this->name);
+			$price = Security::escape($this->price);
+			$type = Security::escape($this->type);
+			$nAvailable = Security::escape($this->nAvailable);
+			$returnable = Security::escape($this->returnable);
+			$sql = "UPDATE accessorio SET name='$name', price='$price', type='$type', nAvailable=$nAvailable, returnable='$returnable' WHERE id=$id";
+			return self::$mysqli->queryDML($sql) > 0;
 		}
 		
 		/**
@@ -155,9 +156,9 @@
 			Security::init();
 			self::init();
 			$n = Security::escape($name);
-			$p = (is_numeric($price) ? $price : 0);
-			$t = (is_numeric($type) ? (($type < 1) ? 'accessorio' : 'servizio') : (($type == 'servizio') ? 'servizio' : 'accessorio'));
-			$a = ((is_numeric($nAvailable) && $nAvailable >= 0) ? $nAvailable : 0); 
+			$p = Security::escape((is_numeric($price) ? $price : 0));
+			$t = Security::escape((is_numeric($type) ? (($type < 1) ? 'accessorio' : 'servizio') : (($type == 'servizio') ? 'servizio' : 'accessorio')));
+			$a = Security::escape(((is_numeric($nAvailable) && $nAvailable >= 0) ? $nAvailable : 0)); 
 			$r = ($returnable == 'true' ? 1 : 0);
 			$sql = "INSERT INTO accessorio (name, price, type, nAvailable, returnable) VALUES ('$n', $p, '$t', $a, $r)";
 			if(self::$mysqli->queryDML($sql) > 0) {
@@ -167,7 +168,17 @@
 		}
 		
 		public static function getAccessoryList(){
-			$sql = "SELECT * FROM accessorio";
+			$sql = "SELECT * FROM accessorio WHERE nAvailable > 0";
+			$rows = self::$mysqli->querySelect($sql);
+			$result = array();
+			foreach($rows as $acc){
+				$result [] = new Accessory($acc['id']);
+			}
+			return $result;
+		}
+		
+		public static function getDeletedAccessoryList(){
+			$sql = "SELECT * FROM accessorio WHERE nAvailable = 0";
 			$rows = self::$mysqli->querySelect($sql);
 			$result = array();
 			foreach($rows as $acc){
@@ -177,7 +188,7 @@
 		}
 		
 		public static function getAccessoryListArray(){
-			$sql = "SELECT * FROM accessorio";
+			$sql = "SELECT * FROM accessorio WHERE nAvailable > 0";
 			$rows = self::$mysqli->querySelect($sql);
 			$result = array();
 			foreach($rows as $acc){
@@ -186,9 +197,33 @@
 			return $result;
 		}
 		
+		public static function getNotAvailable($idAcc, $idTimeSlot){
+			$query = 'SELECT IFNULL(SUM(bigliettoAccessorio.qta), 0) as nAcc FROM biglietto INNER JOIN bigliettoAccessorio ON biglietto.id = bigliettoAccessorio.codTicket WHERE biglietto.codTimeSlot = '.$idTimeSlot.' AND bigliettoAccessorio.codAccessory = '.$idAcc;
+			return self::$mysqli->querySelect($query)[0]['nAcc'];
+		}
+		
 		public function deleteAccessory(){
 			$this->nAvailable = 0;
 			return $this->merge();
+		}
+		
+		public function updateAccessory($name,$type,$price,$nAvailable,$returnable){
+			$this->name = $name;
+			$this->type = $type;
+			$this->price = $price;
+			$this->nAvailable = $nAvailable;
+			$this->returnable = ($returnable == 'true' ? 1 : 0);
+			return $this->merge();
+		}
+		
+		public static function addAccessoryToUser($codTicket, $codAcc, $qta){
+			self::init();
+			$queryIns = 'INSERT INTO bigliettoAccessorio(codTicket, codAccessory, qta) VALUES ("'.$codTicket.'","'.$codAcc.'","'.$qta.'")';
+			if(self::$mysqli->queryDML($queryIns)==1){
+				return self::$mysqli->getInsertId();
+			}else{
+				return "error";
+			}
 		}
 	}//class
 ?>

@@ -2,6 +2,7 @@
     namespace MMS;
     require_once $_SERVER["DOCUMENT_ROOT"].'/src/includes/autoload.php';
 	use MMS\Database as DB;
+	use MMS\Security as Security;
     
     class Category{
         private static $mysqli=null;
@@ -107,27 +108,37 @@
             $id = $this->id;
             $name = $this->name;
             $discount = $this->discount;
-            $docType = $this->docType;
-            return self::$mysqli->queryDML("update categoria set name='$name',discount='$discount',docType='$docType' where id='$id'") > 0;
+            $docType = Security::escape($this->docType);
+            $priority = $this->priority;
+            return (self::$mysqli->queryDML("UPDATE categoria SET name='$name', discount='$discount', docType='$docType', priority='$priority' where id='$id'") > 0);
         }
         
         /**
          * Aggiunge una nuova categoria al database e ritorna l'oggetto corrispondente
          */
         public static function insCategory($name, $discount, $docType){
-            $db = DB::init();
-            $n = $db->getObj()->real_escape_string($name);
-            $s = ((is_numeric($discount)) ? $discount : 0);
-            $d = $db->getObj()->real_escape_string($docType);
+            $n = Security::escape($name);
+            $s = Security::escape(((is_numeric($discount)) ? $discount : 0));
+            $d = Security::escape($docType);
             $sql = "INSERT INTO categoria(name, discount, docType) VALUES ('$n',$s,'$d')";
-            if ($db->queryDML($sql) > 0){
-                return new Category($db->getInsertId());
+            if (self::$mysqli->queryDML($sql) > 0){
+                return new Category(self::$mysqli->getInsertId());
             }
             return false;
         }
         
         public static function getCategoryList(){
-            $sql = "SELECT * FROM categoria ORDER by priority, id";
+            $sql = "SELECT * FROM categoria WHERE priority >= 0 ORDER by priority, id";
+            $rows = self::$mysqli->querySelect($sql);
+            $result = array();
+            foreach($rows as $cat){
+                $result[] = new Category($cat['id']);
+            }
+            return $result;
+        }
+        
+        public static function getDeletedCategoryList(){
+            $sql = "SELECT * FROM categoria WHERE priority < 0 ORDER by priority, id";
             $rows = self::$mysqli->querySelect($sql);
             $result = array();
             foreach($rows as $cat){
@@ -137,7 +148,7 @@
         }
         
         public static function getCategoryListArray(){
-            $sql = "SELECT * FROM categoria ORDER by priority, id";
+            $sql = "SELECT * FROM categoria WHERE priority >= 0 ORDER by priority, id";
             $rows = self::$mysqli->querySelect($sql);
             $result = array();
             foreach($rows as $cat){
@@ -146,5 +157,21 @@
             return $result;
         }
         
+        public function deleteCategory(){
+            $this->priority = -1;
+            return $this->merge();
+        }
+        
+        public function activeCategory(){
+            $this->priority = 0;
+            return $this->merge();
+        }
+        
+        public function updateCategory($name,$discount,$docType){
+            $this->name = $name;
+            $this->discount = $discount;
+            $this->docType = $docType;
+            return $this->merge();
+        }
     }//class
 ?>

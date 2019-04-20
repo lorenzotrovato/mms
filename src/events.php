@@ -37,27 +37,35 @@
 				<?php
 					$events = Expo::getExpoList();
 					foreach($events as $event){
-						$image = 'images/covers/'.md5($event->getId()).'.jpg';
-						if(!is_file(__DIR__.'/'.$image)){
-							$image = 'images/covers/'.md5($event->getId()).'.png';
-						}
-						echo'
-						<div class="row">
-							<div class="col col-sm-10 col-lg-8 col-xl-6 offset-sm-1 offset-lg-2 offset-xl-3 h-100">
-								<div class="card card-event mb-3 mx-auto" eventId="'.$event->getId().'">
-									<img class="card-img-left" src="'.$image.'">
-									<div class="card-body">
-										<h5 class="card-title">'.$event->getName().'</h5>
-										<p class="card-text block-with-text">'.$event->getDescription().'</p>
-										<p class="card-text btn-container">
-											<button type="button" class="btn btn-secondary event-btn discover-btn mx-auto d-block d-md-inline mb-2 mb-md-0 mr-md-2">Scopri di più</button>
-											<button type="button" class="btn btn-primary event-btn mx-auto d-block d-md-inline eventbuy" eventid="'.$event->getId().'">Acquista per € '.$event->getPrice().'</button>
-										</p>
+						if($event->getId() != 0){
+							$image = 'images/covers/'.md5($event->getId()).'.jpg';
+							if(!is_file(__DIR__.'/'.$image)){
+								$image = 'images/covers/'.md5($event->getId()).'.png';
+							}
+							echo'
+							<div class="row">
+								<div class="col col-sm-10 col-lg-8 col-xl-6 offset-sm-1 offset-lg-2 offset-xl-3 h-100">
+									<div class="card card-event mb-3 mx-auto" eventId="'.$event->getId().'">
+										<img class="card-img-left" src="'.$image.'">
+										<div class="card-body">
+											<h5 class="card-title">'.stripslashes($event->getName()).'</h5>
+											<p class="card-text block-with-text">'.stripslashes($event->getDescription()).'</p>
+											<p class="card-text btn-container">
+												<button type="button" class="btn btn-secondary event-btn discover-btn mx-auto d-block d-md-inline mb-2 mb-md-0 mr-md-2">Scopri di più</button>';
+											
+													if(Security::verSession()){
+														echo'
+														<button type="button" class="btn btn-primary event-btn mx-auto d-block d-md-inline eventbuy" eventid="'.$event->getId().'">Acquista per € '.$event->getPrice().'</button>';
+													}else{
+														echo'<a href="signin.php"><button type="button" class="btn btn-primary event-btn mx-auto d-block d-md-inline">Accesso necessario</button></a>';
+													}
+												echo'
+											</p>
+										</div>
 									</div>
 								</div>
-							</div>
-						</div>';
-						
+							</div>';
+						}
 					}
 				?>
 			</main>

@@ -5,11 +5,26 @@ $(document).ready(function() {
 		e.preventDefault();
 		var href = $(this).attr('href');
 		getPageContent(href, true);
+		if($('#menu-toggle').css('display') != 'none'){
+			$('#menu-toggle').click();
+		}
 	});
 	
 	$(document).on('click', '#menu-toggle', function(e){
 		e.preventDefault();
         $("#wrapper").toggleClass("toggled");
+    	$('#overlay').fadeToggle();
+        $(this).toggleClass('offset-md-3');
+        $(this).toggleClass('offset-sm-4');
+        $(this).toggleClass('offset-6');
+        $(this).toggleClass('box_rotate');
+        if($(this).css('background-color') != 'rgb(255, 255, 255)'){
+        	$(this).css('background-color', 'white');
+        	$(this).css('color', 'black');
+        }else{
+        	$(this).css('background-color', '#6c757d');
+        	$(this).css('color', 'white');
+        }
 	});
 
 	window.onpopstate = function() {
@@ -60,6 +75,10 @@ function getPageName(sec, hiPush) {
 			page = 'pages/adminpanel/dash.php';
 			sec = 'dash';
 			break;
+		case 'visit':
+			page = 'pages/adminpanel/visit.php';
+			sec = 'visit';
+		break;
 		case 'expos':
 			page = 'pages/adminpanel/expos.php';
 			sec = 'expos';
@@ -72,6 +91,15 @@ function getPageName(sec, hiPush) {
 			page = 'pages/adminpanel/tickets.php';
 			sec = 'tickets';
 			break;
+		case 'users':
+			page = 'pages/adminpanel/users.php';
+			sec = 'users';
+			break;
+		case 'ticketval':
+			page = 'pages/adminpanel/ticketval.php';
+			sec = 'ticketval';
+			break;
+		
 		default:
 			page = 'pages/adminpanel/dash.php';
 			sec = 'dash';

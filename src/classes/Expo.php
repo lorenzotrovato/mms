@@ -32,8 +32,8 @@
 			$this->id = $id;
 			$this->name = $row['name'];
 			$this->description = $row['description'];
-			$this->startDate= $row['startDate'];
-			$this->endDate= $row['endDate'];
+			$this->startDate = $row['startDate'];
+			$this->endDate = $row['endDate'];
 			$this->price = $row['price'];
 			$this->maxSeats = $row['maxSeats'];
 			TimeSlot::init();
@@ -58,11 +58,11 @@
  	 		Security::init();
  	 		//controllo campi
  	 		$n = Security::escape($n,63);
- 	 		$ds = Security::escape($ds);
- 	 		$sd = Security::escape($sd);
- 	 		$ed = Security::escape($ed);
- 	 		$pr = floatval(Security::escape($pr));
- 	 		$ms = intval(Security::escape($ms));
+ 	 		$ds = $ds;
+ 	 		$sd = $sd;
+ 	 		$ed = $ed;
+ 	 		$pr = floatval($pr);
+ 	 		$ms = intval($ms);
  	 		//controllo valori date
  	 		if(strtotime($sd)>strtotime($ed)){
  	 			$tmp = $sd;
@@ -211,7 +211,13 @@
 		 * @return mixed se l'operazione è andata a buon fine ritorna il numero di righe affette (integer) altrimenti ritorna l'errore (string)
 		 */
 		public function merge(){
-			$sql = "UPDATE evento SET name='$this->name', startDate='$this->startDate', endDate='$this->endDate', price=$this->price, maxSeats=$this->maxSeats WHERE id=$this->id";
+			$name=Security::escape($this->name);
+			$startDate=(Security::escape($this->startDate) == '' ? "NULL" : "'".Security::escape($this->startDate)."'");
+			$endDate=(Security::escape($this->endDate)  == '' ? "NULL" : "'".Security::escape($this->endDate)."'");
+			$price=Security::escape($this->price);
+			$maxSeats=Security::escape($this->maxSeats);
+			$id=Security::escape($this->id);
+			$sql = "UPDATE evento SET name='$name', startDate=$startDate, endDate=$endDate, price='$price', maxSeats=$maxSeats WHERE id=$id";
 			return self::$mysqli->queryDML($sql);
 		}
 		
@@ -230,13 +236,14 @@
 		}
 		
 		public static function getVisit(){
-			$sql = "SELECT * FROM evento WHERE id == 0";
+			self::$mysqli = DB::init();
+			$sql = "SELECT * FROM evento WHERE id = 0";
 			$row = self::$mysqli->querySelect($sql)[0];
 			return $row;
 		}
 		
 		public static function getExpoList(){
-			$sql = "SELECT * FROM evento WHERE id <> 0 ORDER BY startDate, endDate DESC";
+			$sql = "SELECT * FROM evento ORDER BY startDate, endDate DESC";
 			$rows = self::$mysqli->querySelect($sql);
 			$result = array();
 			foreach($rows as $event){
@@ -253,9 +260,15 @@
 		}
 		
 		public function getOccupiedSeats(){
-			$from = $this->startDate;
+			if($this->startDate == null && $this->endDate == null){
+				$from = date('Y-m-d', strtotime('+1 day'));
+				$end = date('Y-m-d', strtotime('+31 day'));
+			}else{
+				$from = $this->startDate;
+				$end = $this->endDate;
+			}
 			$array = array();
-			while($from <= $this->endDate){
+			while($from <= $end){
 				$day = self::getDayOfWeekFromDate($from);
 				if(count($this->timeSlots[$day]) > 0){
 					$array[$from]['dayOfWeek'] = $day;

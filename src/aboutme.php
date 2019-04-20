@@ -14,7 +14,7 @@
 	$htmlTickets = '';
 	$allts = $user->getUserTickets();
 	for($i=0;$i<count($allts);$i++){
-		$htmlTickets .= '<tr><td>'.($i+1).'</td><td>'.$allts[$i]->getEvent()->getName().'</td><td>'.date('d/m/Y',strtotime($allts[$i]->getDatePurchase())).'</td><td>'.$allts[$i]->getTotalPrice().'</td></tr>';
+		$htmlTickets .= '<tr class="user-ticket handCursor" valId="'.$allts[$i]->getId().'"><td>'.($i+1).'</td><td class="ev-name">'.$allts[$i]->getEvent()->getName().'</td><td>'.date('d/m/Y',strtotime($allts[$i]->getDatePurchase())).'</td><td>'.$allts[$i]->getTotalPrice().'</td></tr>';
 	}
 ?>
 <!doctype html>
@@ -37,6 +37,26 @@
 	</head>
 	
 	<body class="text-center">
+		
+		<!-- Modal -->
+		<div class="modal fade" id="modalTick" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="modalTickTitle"></h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body" id="tickBodyData">
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-dismiss="modal">Chiudi</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
 		<div class="container-fluid cover-container d-flex h-100 mx-auto flex-column">
 			<?php
 				include './includes/header.php';
@@ -67,13 +87,13 @@
 												<div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
 													<div class="form-group">
 														<label for="profileChangePass1">Cambio password</label>
-														<input type="password" class="form-control" id="profileChangePass1" value="password">
+														<input type="password" class="form-control" id="profileChangePass1" placeholder="Password">
 													</div>
 												</div>
 												<div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
 													<div class="form-group">
 														<label for="profileChangePass2">Ripeti la password</label>
-														<input type="password" class="form-control" id="profileChangePass2" value="password">
+														<input type="password" class="form-control" id="profileChangePass2" placeholder="Password">
 													</div>
 												</div>
 											</div>
@@ -93,8 +113,9 @@
 								<div class="card mt-3 mt-lg-0" style="background-color: rgba(255, 255, 255, 0.8); color: black;" id="cardPurchasedTickets">
 									<div class="card-body">
 										<h5 class="card-title">Biglietti acquistati</h5>
+										<h6 class="text-muted">Clicca su un biglietto per avere il codice QR da esibire</h6>
 										<div class="table-responsive">
-											<table class="table">
+											<table class="table table-hover">
 												<thead class="thead-dark">
 													<th>#</th>
 													<th>Evento</th>
@@ -196,6 +217,28 @@
 					}, 5000);
 				}
 				return false;
+			});
+			
+			$(document).ready(function() {
+				$('.user-ticket').click(function() {
+					var ticket = $(this);
+					var code = ticket.attr('valId');
+					$.ajax({
+						type: "GET",
+						cache: false,
+						url: "./includes/router.php",
+						data: {'action':'getCodes','idTick': code},
+						success: function(response){
+							var name = ticket.children('.ev-name').html();
+							$('#modalTickTitle').html(name);
+							$('#tickBodyData').html(response);
+							$('#modalTick').modal('show');
+						},
+						error: function(){
+							
+						}
+					})
+				});
 			});
 		</script>
 	</body>

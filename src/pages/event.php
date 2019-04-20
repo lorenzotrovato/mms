@@ -2,6 +2,11 @@
 	namespace MMS;
 	require_once '../includes/autoload.php';
 	use MMS\Expo as Expo;
+	use MMS\Security as Security;
+	use MMS\Category as Category;
+	Security::init();
+	Category::init();
+	Security::verSession();
 	if(isset($_GET['id'])){
 		$id = $_GET['id'];
 		$expo = new Expo($id);
@@ -45,10 +50,10 @@
 ?>
 <div class="event-info">
 	<div>
-		<h2><?=$expo->getName()?></h2>
+		<h2><?=stripslashes($expo->getName())?></h2>
 		<div class="jumbotron pt-3 pb-1 mb-3" style="margin-top: 20px;">
 			<div class="container">
-				<p class="lead"><?=$expo->getDescription()?></p>
+				<p class="lead"><?=stripslashes($expo->getDescription())?></p>
 			</div>
 		</div>
 	</div>
@@ -98,36 +103,35 @@
 		<table class="table">
 			<thead>
 				<tr>
-				<th scope="col">#</th>
-				<th scope="col">First</th>
-				<th scope="col">Last</th>
-				<th scope="col">Handle</th>
+				<th scope="col">Categoria</th>
+				<th scope="col">Documento da portare</th>
+				<th scope="col">Prezzo</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<th scope="row">1</th>
-					<td>Mark</td>
-					<td>Otto</td>
-					<td>@mdo</td>
-				</tr>
-				<tr>
-					<th scope="row">2</th>
-					<td>Jacob</td>
-					<td>Thornton</td>
-					<td>@fat</td>
-				</tr>
-				<tr>
-					<th scope="row">3</th>
-					<td>Larry</td>
-					<td>the Bird</td>
-					<td>@twitter</td>
-				</tr>
+				<?php
+					$categoryList = Category::getCategoryList();
+					foreach($categoryList as $key => $value){
+				?>
+					<tr>
+						<th scope="row"><?=$value->getName()?></th>
+						<td><?=$value->getDocType()?></td>
+						<td>€ <?=$expo->getPrice() - (($expo->getPrice() * $value->getDiscount())/100)?></td>
+					</tr>
+				<?php
+					}
+				?>
 			</tbody>
 		</table>
 	</div>
 	<div class="btn-container-info">
 		<button type="button" class="btn btn-secondary discover-btn d-inline ml-1">Chiudi</button>
-		<button type="button" class="btn btn-primary d-inline mr-1 eventbuy" eventid="<?=$expo->getId()?>">Acquista biglietto</button>
+		<?php if(Security::verSession()){ ?>
+			<button type="button" class="btn btn-primary d-inline mr-1 eventbuy" eventid="<?=$expo->getId()?>">Acquista biglietto</button>
+		<?php
+			}else{
+				echo'<button type="button" class="btn btn-primary d-inline mr-1 eventbuy">Accesso necessario</button>';
+			}
+		?>
 	</div>
 </div>

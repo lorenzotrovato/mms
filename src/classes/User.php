@@ -3,7 +3,7 @@
 	require_once $_SERVER["DOCUMENT_ROOT"].'/src/includes/autoload.php';
 	use MMS\Database as DB;
 	use MMS\Ticket as Ticket;
-
+	use MMS\Security as Security;
 	class User{
 
 		private static $mysqli;
@@ -101,8 +101,8 @@
 		 * @param string $password la password
 		 */
 		function setPassword($password){
-			$userId = $this->id;
-			$hash = password_hash($password, PASSWORD_DEFAULT);
+			$userId =Security::escape($this->id);
+			$hash = Security::escape(password_hash($password, PASSWORD_DEFAULT));
 			self::$mysqli->queryDML("UPDATE utente SET pass = '$hash' WHERE id = $userId");
 			$this->pwd = $hash;
 		}
@@ -112,7 +112,11 @@
 		 * @return mixed se l'operazione è andata a buon fine ritorna il numero di righe affette (integer) altrimenti ritorna l'errore (string)
 		 */
 		function merge(){
-			$sql = "UPDATE utente SET name = '$this->name', mail = '$this->email', role = '$this->role' WHERE id = $this->id";
+			$name=Security::escape($this->name);
+			$email=Security::escape($this->email);
+			$role=Security::escape($this->role);
+			$id=Security::escape($this->id);
+			$sql = "UPDATE utente SET name = '$name', mail = '$email', role = '$role' WHERE id = $id";
 			return self::$mysqli->queryDML($sql);
 		}
 		
@@ -138,11 +142,24 @@
 		}
 		
 		/**
+		 * @return array User la lista degli utenti
+		 */
+		public static function getUserList(){
+			self::init();
+			$list = self::$mysqli->querySelect('SELECT * FROM utente');
+			$ret = array();
+			for($i=0;$i<count($list);$i++){
+				array_push($ret, new User($list[$i]['id']));
+			}
+			return $ret;
+		}
+		
+		/**
 		 * @return array un array dei biglietti acquistati dall'utente
 		 */
 		public function getUserTickets(){
 			$tickets = array();
-			$allts = self::$mysqli->querySelect('SELECT * FROM biglietto WHERE codUser="'.$this->id.'"');
+			$allts = self::$mysqli->querySelect('SELECT * FROM biglietto WHERE codUser="'.$this->id.' AND codTimeSlot IN (SELECT id FROM fasciaoraria)"');
 			Ticket::init();
 			for($i=0;$i<count($allts);$i++){
 				try{

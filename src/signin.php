@@ -41,14 +41,13 @@
 	</head>
 	
 	<body>
-		<div class="background" id="canvCnt"></div>
 		<form class="form-signin" id="loginform">
 			<!--<div class="card bg-dark text-white">
 				<div class="card-body">-->
 					<div class="text-center mb-4">
-						<img class="mb-4" src="https://getbootstrap.com/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
+						<a href="index.php"><img class="mb-4" src="./favicon.png" alt="" width="72" height="72"></a>
 						<h1 class="h3 mb-3 font-weight-normal">Accedi</h1>
-						<p>Per effettuare acquisti online devi accedere</p>
+						<p>Per effettuare acquisti online devi effettuare l'accesso</p>
 					</div>
 					<?php echo $divErr; ?>
 					<div class="alert alert-warning d-none" role="alert" id="warn">
@@ -73,10 +72,13 @@
 		       			<label class="custom-control-label" for="autologin"> Ricorda le credenziali</label>
 		      		</div>
 					<button id="signinbtn" class="btn btn-lg btn-primary btn-block">Accedi</button>
+					<br>
+					<footer>
+						<p class="text-muted">Non hai un account? <a href="signup.php">Registrati</a></p>
+					</footer>
 				<!--</div>
 			</div>-->
 		</form>
-		
 		<script src="./js/jquery-3.3.1.min.js"></script>
 		<script src="./js/bootstrap.bundle.min.js"></script>
 		<script src="./js/p5.min.js"></script>

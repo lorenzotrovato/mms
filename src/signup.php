@@ -29,7 +29,7 @@
 	<body>
 		<form class="form-signin" id="registerform">
 			<div class="text-center mb-4">
-				<img class="mb-4" src="https://getbootstrap.com/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
+				<a href="index.php"><img class="mb-4" src="./favicon.png" alt="" width="72" height="72"></a>
 				<h1 class="h3 mb-3 font-weight-normal">Registrati</h1>
 				<p>Per effettuare acquisti online devi avere un account</p>
 			</div>
@@ -54,7 +54,10 @@
 				<label for="passIn">Password</label>
 			</div>
 			<button id="signupbtn" class="btn btn-lg btn-primary btn-block">Registrati</button>
-			<p class="mt-5 mb-3 text-muted text-center">&copy; 2017-2018</p>
+			<br>
+			<footer>
+				<p class="text-muted">Hai già un account? <a href="signin.php">Accedi</a></p>
+			</footer>
 		</form>
 		
 		<script src="./js/jquery-3.3.1.min.js"></script>

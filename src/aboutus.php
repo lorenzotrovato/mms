@@ -3,6 +3,9 @@
 	define('PAGENAME','aboutus');
     require_once 'includes/autoload.php';
     use MMS\Security;
+    use MMS\Expo as EX;
+    use MMS\TimeSlot as TS;
+	TS::init();
     Security::init();
 ?>
 <html lang="it">
@@ -69,9 +72,6 @@
 										</tr>
 									</tbody>
 								</table>
-								<button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal">
-									Contattaci
-								</button>
 							</div>
 						</div>
 					</div>
@@ -79,81 +79,118 @@
 						<div class="card my-3" style="background-color: rgba(255, 255, 255, 0.8); color: black;">
 							<div class="card-body">
 								<h5 class="card-title">I nostri orari</h5>
+								<?php
+									$ex = new EX(0);
+									$week = $ex->getTimeSlots();
+									$i = 1;
+								?>
 								<table class="table table-fixed table-striped text-center" style="background-color: white">
 									<thead class="thead-dark">
 										<th>Giorno</th>
-										<th>Mattina</th>
-										<th>Pomeriggio</th>
+										<th>Orari</th>
 									</thead>
 									<tbody>
 										<tr>
 											<td>Luned&igrave;</td>
-											<td>8:00 - 12:00</td>
-											<td>14:00 - 19:00</td>
+											<td>
+												<?php
+													if(!empty($week[$i])){
+														foreach($week[$i] as $wd)
+															echo $wd->getStartHour().' - '.$wd->getEndHour().'<br>';
+													}else{
+														echo 'Chiuso';
+													}
+													$i++;
+												?>
+											</td>
 										</tr>
 										<tr>
 											<td>Marted&igrave;</td>
-											<td>8:00 - 12:00</td>
-											<td>14:00 - 19:00</td>
+											<td>
+												<?php
+													if(!empty($week[$i])){
+														foreach($week[$i] as $wd)
+															echo $wd->getStartHour().' - '.$wd->getEndHour().'<br>';
+													}else{
+														echo 'Chiuso';
+													}
+													$i++;
+												?>
+											</td>
 										</tr>
 										<tr>
 											<td>Mercoled&igrave;</td>
-											<td>8:00 - 12:00</td>
-											<td>14:00 - 19:00</td>
+											<td>
+												<?php
+													if(!empty($week[$i])){
+														foreach($week[$i] as $wd)
+															echo $wd->getStartHour().' - '.$wd->getEndHour().'<br>';
+													}else{
+														echo 'Chiuso';
+													}
+													$i++;
+												?>
+											</td>
 										</tr>
 										<tr>
 											<td>Gioved&igrave;</td>
-											<td>8:00 - 12:00</td>
-											<td>14:00 - 19:00</td>
+											<td>
+												<?php
+													if(!empty($week[$i])){
+														foreach($week[$i] as $wd)
+															echo $wd->getStartHour().' - '.$wd->getEndHour().'<br>';
+													}else{
+														echo 'Chiuso';
+													}
+													$i++;
+												?>
+											</td>
 										</tr>
 										<tr>
 											<td>Venerd&igrave;</td>
-											<td>8:00 - 12:00</td>
-											<td>14:00 - 19:00</td>
+											<td>
+												<?php
+													if(!empty($week[$i])){
+														foreach($week[$i] as $wd)
+															echo $wd->getStartHour().' - '.$wd->getEndHour().'<br>';
+													}else{
+														echo 'Chiuso';
+													}
+													$i++;
+												?>
+											</td>
 										</tr>
 										<tr>
 											<td>Sabato</td>
-											<td>8:00 - 12:00</td>
-											<td>Chiuso</td>
+											<td>
+												<?php
+													if(!empty($week[$i])){
+														foreach($week[$i] as $wd)
+															echo $wd->getStartHour().' - '.$wd->getEndHour().'<br>';
+													}else{
+														echo 'Chiuso';
+													}
+													$i++;
+												?>
+											</td>
 										</tr>
 										<tr>
 											<td>Domenica</td>
-											<td>8:00 - 12:00</td>
-											<td>14:00 - 18:00</td>
+											<td>
+												<?php
+													if(!empty($week[$i])){
+														foreach($week[$i] as $wd)
+															echo $wd->getStartHour().' - '.$wd->getEndHour().'<br>';
+													}else{
+														echo 'Chiuso';
+													}
+													$i++;
+												?>
+											</td>
 										</tr>
 									</tbody>
 								</table>
 							</div>
-						</div>
-					</div>
-				</div>
-				<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-					<div class="modal-dialog" role="document">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title text-dark" id="exampleModalLabel">Inviaci i tuoi suggerimenti!</h5>
-								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-									<span aria-hidden="true">&times;</span>
-								</button>
-							</div>
-							<form id="suggestions" class="mb-0">
-								<div class="modal-body">
-									<div class="form-row">
-										<div class="form-group col-12">
-											<input type="email" class="form-control" id="sugg_email" placeholder="Email">
-										</div>
-									</div>
-									<div class="form-row">
-										<div class="form-group col-12">
-											<textarea class="form-control" id="sugg_textarea" rows="4" placeholder="Il tuo suggerimento"></textarea>
-										</div>
-									</div>
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
-									<button type="button" class="btn btn-primary">Invia</button>
-								</div>
-							</form>
 						</div>
 					</div>
 				</div>

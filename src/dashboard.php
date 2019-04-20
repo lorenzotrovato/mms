@@ -17,7 +17,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="description" content="">
         <meta name="author" content="">
-        <link rel="icon" href="../../../../favicon.ico">
     
         <title>Musetek - Innovation of the past</title>
     
@@ -37,7 +36,8 @@
             ?>
         </div>
         <div class="container-fluid">
-            <a href="#menu-toggle" class="btn btn-secondary offset-lg-2 offset-md-3 offset-sm-4 offset-6" id="menu-toggle" style="margin-top: 6px; left: 3px; line-height: 30px"><span data-feather="arrow-left" style="width: 22px; height: 22px"></span></a>
+            <a href="#menu-toggle" class="btn btn-secondary" id="menu-toggle" style="margin-top: 15px; line-height: 30px; height: 40px; width: 40px; position: relative; transition: all 0.4s linear; left: 15px; z-index: 999"><span data-feather="arrow-right" style="width: 22px; height: 22px; top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%); position: absolute;"></span></a>
+            <div id="overlay" class="d-md-none" style="position: absolute; height: 100%; width: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 99; top: 0; left: 0; display: none"></div>
             <div class="row">
                 <nav id="wrapper" class="col-lg-2 col-md-3 col-sm-4 col-6 bg-light sidebar">
                     <div class="sidebar-sticky">
@@ -58,6 +58,11 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a class="sb-link nav-link" href="visit">
+                                    <span data-feather="eye"></span> Visita
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="sb-link nav-link" href="expos">
                                     <span data-feather="list"></span> Esposizioni
                                 </a>
@@ -70,6 +75,16 @@
                             <li class="nav-item">
                                 <a class="sb-link nav-link" href="categories">
                                     <span data-feather="users"></span> Categorie
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="sb-link nav-link" href="users">
+                                    <span data-feather="user"></span> Utenti
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="sb-link nav-link" href="ticketval">
+                                    <span data-feather="check-circle"></span> Validazione biglietti
                                 </a>
                             </li>
                         </ul>

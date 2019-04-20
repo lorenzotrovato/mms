@@ -250,6 +250,15 @@ td a{
 	cursor: pointer;
 }
 
+table.recapBought th, table.recapBought td{
+	vertical-align: text-top;
+	padding: 5px 10px 5px 10px;
+}
+
+table.recapBought th{
+	text-align: right;
+}
+
 @media screen and (max-width: 768px) {
 	.card-event {
 		height: auto;

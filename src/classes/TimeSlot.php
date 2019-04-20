@@ -18,7 +18,7 @@
 		 * @param integer $codEvent  (optional) codice dell'evento di riferimento
 		 * @param string  $startHour (optional) ora di inizio della fascia oraria
 		 * @param integer $minutes   (optional) durata della fascia oraria in minuti
-		 * @param integer $day       (optional) giorno della settimana (0 < $day < 7) a cui la fascia oraria fa riferimento
+		 * @param integer $day       (optional) giorno della settimana (1 per Lunedì, 7 per Domenica) a cui la fascia oraria fa riferimento
 		 */
 		public function __construct($id, $codEvent=null, $startHour=null, $minutes=null, $day=null){
 			if(is_null(self::$mysqli)){
@@ -43,6 +43,16 @@
 					throw new \Exception("ID timeslot non esistente");
 				}
 			}
+		}
+		
+		/**
+		 * equals
+		 * @param TimeSlot $compare la fascia oraria da paragonare
+		 * @return true se le fasce orarie hanno lo stesso identificativo, false altrimenti
+		 */
+		 
+		public function equals($compare){
+			return $compare->id == $this->id;
 		}
 		
 		public static function init(){
@@ -75,10 +85,10 @@
 		 * @param integer $day il numero del giorno della settimana (1 lun - 7 dom)
 		 */
 		public static function addSlot($codEvent,$startHour,$minutes,$day){
-			$codEvent = intval($codEvent);
+			$codEvent = Security::escape(intval($codEvent));
 			$startHour = Security::escape($startHour,5);
-			$minutes = abs(intval($minutes));
-			$day = abs(intval($day));
+			$minutes = Security::escape(abs(intval($minutes)));
+			$day = Security::escape(abs(intval($day)));
 			$queryInsert = 'INSERT INTO fasciaoraria (codEvent,startHour,minutes,day) VALUES ("'.$codEvent.'","'.$startHour.'","'.$minutes.'","'.$day.'")';
 			if(self::$mysqli->queryDML($queryInsert)==1){
 				return new TimeSlot(self::$mysqli->getInsertId());
@@ -142,7 +152,7 @@
 		 * @return integer il numero di posti occupati
 		 */
 		public function getOccupiedSeats($date){
-			$date=Security::escape($date);
+			$date= Security::escape($date);
 			$sql = "SELECT count(*) as num FROM biglietto WHERE codTimeSlot = ".$this->id." AND dateValidity = '$date'";
 			$rows = self::$mysqli->querySelect($sql);
 			return $rows[0]['num'];
@@ -154,10 +164,6 @@
 		public function hasTickets(){
 			$queryBiglietti = 'SELECT count(*) as nbiglietti FROM biglietto WHERE codTimeSlot = "'.$this->id.'"';
 			return self::$mysqli->querySelect($queryBiglietti)[0]['nbiglietti']>0;
-		}
-		
-		public function getDays(){
-			
 		}
 		
 		public function getArray(){

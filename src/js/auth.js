@@ -10,14 +10,18 @@ $(document).ready(function() {
 			url: "./includes/router.php",
 			data: "action=login&userIn="+user+"&passIn="+pass+"&autologin="+check,
 			success: function(response) {
-				if(response == 'success'){
-					$(window).attr('location','index.php');
-				}else if(response == 'success-admin'){
-					$(window).attr('location','dashboard.php');
+				if(response!=""){
+					if(response == 'success'){
+						$(window).attr('location','index.php');
+					}else if(response == 'success-admin'){
+						$(window).attr('location','dashboard.php');
+					}else{
+						resetAlerts();
+						$('#err').html('<strong>Errore:</strong> '+response);
+						$('#err').removeClass('d-none');
+					}
 				}else{
-					resetAlerts();
-					$('#err').html('<strong>Errore:</strong> '+response);
-					$('#err').removeClass('d-none');
+					alert('lol');
 				}
 			},
 			error: function() {
